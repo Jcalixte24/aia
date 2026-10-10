@@ -1,0 +1,1267 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIA · Association Ivoirienne d'Astronomie</title>
+<meta name="description" content="L'Association Ivoirienne d'Astronomie fait découvrir le ciel à toute la Côte d'Ivoire : observations publiques, clubs dans les lycées, astrophotographie, conférences AstroPause et recherche d'astéroïdes.">
+<meta name="theme-color" content="#0B1026">
+<meta property="og:title" content="AIA · Le ciel commence ici">
+<meta property="og:description" content="Observations publiques, clubs d'astronomie, conférences et recherche d'astéroïdes depuis Abidjan.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CI">
+<meta property="og:image" content="images/logo-600.png">
+<link rel="icon" href="images/favicon.png">
+<link rel="apple-touch-icon" href="images/logo-256.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,700;0,800;0,900;1,700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script>window.S={e:0,o:0,d:0,t:0,f:0,l:[0,0,0,0,0,0,0,0]};</script>
+<style>
+:root{
+  --night:#0B1026; --deep:#141C45; --mid:#1C2A5E; --gold:#F5A623; --gold-soft:#FFD084;
+  --ink:#EAF0FF; --ink-dim:#A9B4DB; --line:rgba(234,240,255,.14);
+  --font-d:'Montserrat',system-ui,sans-serif; --font-b:'Open Sans',system-ui,sans-serif;
+  --r:18px; --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:auto}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{background:var(--night);color:var(--ink);font-family:var(--font-b);font-size:17px;line-height:1.7;overflow-x:hidden}
+img,svg,canvas{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4{font-family:var(--font-d);font-weight:800;line-height:1.06;letter-spacing:-.015em}
+em{font-style:italic;font-weight:700;color:var(--gold)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:6px}
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none}
+main,header,footer{position:relative;z-index:2}
+section{position:relative}
+.pad{padding:clamp(90px,13vw,170px) 0}
+.wrap{width:min(1180px,100% - 48px);margin:0 auto}
+.lbl{font:700 12px/1 var(--font-d);letter-spacing:.26em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.lbl::before{content:"";width:34px;height:1px;background:var(--gold)}
+h2{font-size:clamp(34px,5.6vw,70px);max-width:16ch}
+.lead{color:var(--ink-dim);max-width:56ch;margin-top:22px;font-size:18px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:0 30px;border-radius:999px;font:700 14px var(--font-d);letter-spacing:.05em;border:1px solid var(--gold);cursor:pointer;transition:transform .3s var(--ease),background .3s,box-shadow .3s}
+.btn.solid{background:var(--gold);color:var(--night)}
+.btn.solid:hover{box-shadow:0 0 0 7px rgba(245,166,35,.16),0 12px 44px rgba(245,166,35,.4);transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--gold)}
+.btn.ghost:hover{background:rgba(245,166,35,.12);transform:translateY(-2px)}
+.anim .rv{opacity:0;transform:translateY(46px)}
+.mask{display:block;overflow:hidden;padding:.06em 0 .16em;margin-bottom:-.1em}
+.mask>span{display:block}
+.anim .mask>span{transform:translateY(110%)}
+.credit{font-size:12px;color:var(--ink-dim);opacity:.8;margin-top:16px}
+.credit a{text-decoration:underline}
+
+/* progress */
+#prog{position:fixed;left:0;top:0;height:2px;width:100%;z-index:90;background:var(--gold);transform:scaleX(0);transform-origin:left;box-shadow:0 0 12px var(--gold)}
+
+/* splash */
+#splash{position:fixed;inset:0;z-index:100;background:var(--night);display:grid;place-items:center;transition:opacity .9s .1s,visibility .9s .1s}
+#splash.out{opacity:0;visibility:hidden}
+.reticle{position:relative;width:180px;height:180px}
+.reticle svg{width:100%;height:100%;overflow:visible}
+.rg{fill:none;stroke:var(--gold);stroke-width:1.2}
+.r1{animation:spin 6s linear infinite;transform-origin:90px 90px;stroke-dasharray:4 10}
+.r2{animation:spin 4s linear infinite reverse;transform-origin:90px 90px}
+.sp-txt{position:absolute;left:0;right:0;top:calc(100% + 26px);text-align:center;font:700 12px var(--font-d);letter-spacing:.4em;color:var(--ink-dim)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{transform:scale(1.2);opacity:.5}}
+
+/* nav */
+header{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .4s,backdrop-filter .4s}
+header.sc{background:rgba(11,16,38,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:76px}
+.logo{display:flex;align-items:center;gap:12px;font:800 20px var(--font-d);letter-spacing:.08em}
+.logo img{width:44px;height:44px}
+.logo small{display:block;font:600 9px var(--font-d);letter-spacing:.22em;color:var(--ink-dim);margin-top:2px}
+.links{display:flex;gap:28px;align-items:center}
+.links a{font:700 12px var(--font-d);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);position:relative;padding:8px 0;transition:color .3s}
+.links a:not(.btn)::after{content:"";position:absolute;left:0;bottom:2px;height:1px;width:0;background:var(--gold);transition:width .4s var(--ease)}
+.links a:hover,.links a.act{color:var(--ink)}
+.links a:hover::after,.links a.act::after{width:100%}
+.burger{display:none;width:48px;height:48px;background:none;border:1px solid var(--line);border-radius:50%;cursor:pointer;color:var(--ink)}
+.burger span{display:block;width:18px;height:1.5px;background:currentColor;margin:5px auto}
+#ov{position:fixed;inset:0;z-index:60;background:var(--night);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;opacity:0;visibility:hidden;transition:.5s}
+#ov.open{opacity:1;visibility:visible}
+#ov a{font:800 30px var(--font-d)}
+#ov a em{color:var(--gold)}
+#ovx{position:absolute;top:14px;right:24px;width:48px;height:48px;background:none;border:1px solid var(--line);border-radius:50%;color:var(--ink);font-size:22px;cursor:pointer}
+#rail{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:10px;font:700 10px var(--font-d);letter-spacing:.2em;color:var(--ink-dim)}
+#rail .bar{width:1px;height:34vh;background:var(--line);position:relative;margin-right:4px}
+#rail .bar i{position:absolute;left:-3px;top:0;width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 14px var(--gold)}
+#alt{color:var(--gold);font-size:13px;letter-spacing:.08em;font-variant-numeric:tabular-nums}
+
+/* HERO STAGE */
+.stage{position:relative;height:100svh;overflow:hidden}
+#scope{position:absolute;inset:0;width:100%;height:100%}
+.vig{position:absolute;inset:0;background:radial-gradient(ellipse at 62% 50%,transparent 38%,rgba(11,16,38,.78));pointer-events:none}
+.hero-copy{position:absolute;z-index:4;left:max(24px,calc((100vw - 1180px)/2));top:50%;transform:translateY(-46%);width:min(640px,calc(100% - 48px))}
+.hero-copy h1{font-size:clamp(34px,5.3vw,82px);font-weight:900;line-height:1.04}
+.hero-copy h1 .mask{white-space:nowrap}
+.hero-copy{text-shadow:0 2px 28px rgba(11,16,38,.95)}
+.hero-copy .lead{font-size:19px}
+.cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+.coords{margin-top:40px;display:flex;gap:28px;flex-wrap:wrap;font:700 11px var(--font-d);letter-spacing:.18em;color:var(--ink-dim)}
+.coords b{display:block;color:var(--ink);font-size:15px;letter-spacing:.06em;margin-top:4px}
+#tags{position:absolute;inset:0;z-index:3;pointer-events:none}
+.tg{position:absolute;width:176px;transform:translateX(-50%);opacity:0;font-size:13px;line-height:1.4}
+.tg small{font:700 10px var(--font-d);letter-spacing:.2em;color:var(--gold);display:block}
+.tg b{font:800 15px var(--font-d);display:block;margin:2px 0 4px}
+.tg span{color:var(--ink-dim);display:block;font-size:12.5px}
+.tg .ln{position:absolute;left:50%;width:1px;background:linear-gradient(var(--gold),rgba(245,166,35,.15))}
+.tg .dt{position:absolute;left:50%;width:9px;height:9px;margin-left:-4px;border-radius:50%;background:var(--gold);box-shadow:0 0 14px var(--gold)}
+.final{position:absolute;inset:0;z-index:6;display:grid;place-content:center;text-align:center;opacity:0;pointer-events:none}
+.final h2{font-size:clamp(48px,10vw,150px);font-weight:900;max-width:none}
+.final p{color:var(--ink-dim);font-size:20px;margin-top:10px}
+.flash{position:absolute;inset:0;z-index:7;background:radial-gradient(circle,#fff 0%,var(--gold-soft) 38%,rgba(245,166,35,0) 72%);opacity:0;pointer-events:none}
+.hud{position:absolute;z-index:5;left:max(24px,calc((100vw - 1180px)/2));bottom:30px;font:700 10px var(--font-d);letter-spacing:.3em;color:var(--ink-dim);opacity:0}
+.skip{position:absolute;z-index:8;right:max(24px,calc((100vw - 1180px)/2));bottom:20px;min-height:40px;padding:0 18px;font-size:12px}
+.scrollcue{position:absolute;z-index:4;bottom:26px;left:50%;transform:translateX(-50%);font:700 10px var(--font-d);letter-spacing:.3em;color:var(--ink-dim);text-align:center}
+.scrollcue i{display:block;width:1px;height:46px;background:linear-gradient(var(--gold),transparent);margin:10px auto 0;animation:drip 2s infinite}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+body::after{content:"";position:fixed;inset:-50%;z-index:150;pointer-events:none;opacity:.07;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+/* HUB */
+.const{position:relative;height:min(62vh,540px);margin-top:50px;border:1px solid var(--line);border-radius:22px;background:radial-gradient(ellipse at 50% 40%,rgba(28,42,94,.55),rgba(11,16,38,.4));overflow:hidden}
+.cl{position:absolute;inset:0;width:100%;height:100%}
+#cline{stroke-dasharray:1800;stroke-dashoffset:1800}
+.star{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;min-width:44px;min-height:44px;justify-content:center}
+.star i{width:16px;height:16px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 0 rgba(245,166,35,.6),0 0 22px var(--gold);animation:ping 2.6s infinite;transition:transform .4s var(--ease)}
+.star:nth-child(3n) i{animation-delay:.7s}.star:nth-child(3n+1) i{animation-delay:1.4s}
+.star.big i{width:26px;height:26px}
+.star span{font:800 13px var(--font-d);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;transition:color .3s}
+.star:hover i,.star:focus-visible i{transform:scale(1.9)}
+.star:hover span,.star:focus-visible span{color:var(--gold)}
+@keyframes ping{70%{box-shadow:0 0 0 18px rgba(245,166,35,0),0 0 22px var(--gold)}100%{box-shadow:0 0 0 0 rgba(245,166,35,0),0 0 22px var(--gold)}}
+.cpanel{position:absolute;left:24px;top:18px;max-width:300px;padding:16px 20px;border-radius:14px;background:rgba(11,16,38,.75);border:1px solid var(--line);backdrop-filter:blur(8px)}
+.cpanel b{font:800 15px var(--font-d);display:block;color:var(--gold)}
+.cpanel span{font-size:14px;color:var(--ink-dim)}
+
+/* GLOBE */
+.globe-g{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.globewrap{position:relative;aspect-ratio:1;width:100%;max-width:560px;justify-self:center;cursor:grab;touch-action:pan-y}
+.globewrap:active{cursor:grabbing}
+.globewrap canvas{position:absolute;inset:0;width:100%;height:100%}
+.earthtag{position:absolute;z-index:3;left:0;top:0;transform:translate(-50%,-135%);font:700 10px var(--font-d);letter-spacing:.24em;color:var(--gold);white-space:nowrap;opacity:0;pointer-events:none;text-shadow:0 0 12px var(--night);transition:opacity .3s}
+.earthtag b{display:block;font-size:9px;color:var(--ink);letter-spacing:.14em;margin-top:2px}
+.earthtag::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:16px;background:var(--gold)}
+.ghint{position:absolute;left:0;right:0;bottom:-6px;text-align:center;font:700 10px var(--font-d);letter-spacing:.24em;color:var(--ink-dim);text-transform:uppercase}
+
+/* MANIFESTO */
+.manif{min-height:80svh;display:grid;place-items:center;padding:0}
+.manif p{font:800 clamp(28px,4.6vw,62px)/1.18 var(--font-d);max-width:1000px;letter-spacing:-.02em}
+.manif .w{display:inline-block;opacity:.14;margin-right:.26em}
+.manif .w.g{color:var(--gold)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.stat{background:var(--night);padding:34px 24px}
+.stat b{font:900 clamp(36px,5vw,60px)/1 var(--font-d);color:var(--gold);display:block;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--ink-dim);letter-spacing:.12em}
+
+/* MARQUEE */
+.mq{overflow:hidden;white-space:nowrap;padding:34px 0;border-block:1px solid var(--line);background:rgba(11,16,38,.6)}
+.mq .t{display:inline-block;font:900 clamp(40px,7vw,96px)/1 var(--font-d);letter-spacing:-.02em;color:transparent;-webkit-text-stroke:1px rgba(234,240,255,.35);padding-left:4vw}
+.mq .t b{color:var(--gold);-webkit-text-stroke:0;margin:0 .3em}
+
+/* TEAM */
+.team-head{padding-bottom:30px}
+.hs-track{display:flex;gap:28px;padding:0 max(24px,calc((100vw - 1180px)/2));width:max-content;align-items:stretch}
+.pcard{width:min(400px,78vw);flex:none;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:rgba(20,28,69,.5);display:flex;flex-direction:column;transition:border-color .4s,transform .5s var(--ease)}
+.pcard:hover{border-color:var(--gold);transform:translateY(-8px)}
+.pph{position:relative;aspect-ratio:4/4.2;overflow:hidden;background:radial-gradient(circle at 70% 20%,var(--mid),var(--night))}
+.pph img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;transition:transform 1.4s var(--ease)}
+.pcard:hover .pph img{transform:scale(1.06)}
+.pph .mono{position:absolute;inset:0;display:grid;place-items:center;font:900 96px var(--font-d);color:rgba(245,166,35,.9);letter-spacing:-.04em}
+.pph svg.cst{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+.pph .badge{position:absolute;left:16px;top:16px;font:700 10px var(--font-d);letter-spacing:.2em;background:var(--gold);color:var(--night);padding:6px 12px;border-radius:999px}
+.pbody{padding:22px 24px 28px}
+.pbody small{font:700 10px var(--font-d);letter-spacing:.22em;color:var(--gold);text-transform:uppercase}
+.pbody h3{font-size:24px;margin:8px 0 10px}
+.pbody p{color:var(--ink-dim);font-size:14.5px;line-height:1.6}
+.pcard.join{justify-content:center;align-items:flex-start;padding:36px;background:linear-gradient(160deg,rgba(245,166,35,.16),rgba(20,28,69,.4));border-style:dashed;border-color:var(--gold)}
+.pcard.join h3{font-size:30px;margin-bottom:12px}
+.pcard.join p{color:var(--ink-dim);margin-bottom:22px}
+.founding{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center;margin-bottom:90px}
+.imgw{position:relative;overflow:hidden;border-radius:var(--r);border:1px solid var(--line)}
+.imgw img{width:100%;height:112%;object-fit:cover}
+.imgw figcaption{position:absolute;left:0;right:0;bottom:0;padding:60px 22px 18px;background:linear-gradient(transparent,rgba(11,16,38,.92));font-size:13px;color:var(--ink-dim)}
+.imgw figcaption b{display:block;font:800 16px var(--font-d);color:var(--ink)}
+
+/* MISSIONS */
+.miss{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:60px}
+.ms{border-top:1px solid var(--line);padding-top:24px;position:relative}
+.ms::before{content:"";position:absolute;left:0;top:-1px;height:1px;width:0;background:var(--gold);transition:width 1s var(--ease)}
+.ms.on::before{width:100%}
+.ms b{font:900 56px/1 var(--font-d);color:transparent;-webkit-text-stroke:1px var(--gold)}
+.ms h3{font-size:26px;margin:14px 0 10px}
+.ms p{color:var(--ink-dim);font-size:15.5px}
+.goal{margin-top:70px;padding:44px;border:1px solid var(--gold);border-radius:var(--r);background:linear-gradient(120deg,rgba(245,166,35,.12),transparent);display:flex;gap:30px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.goal h3{font-size:clamp(26px,3.4vw,40px);max-width:20ch}
+.goal p{color:var(--ink-dim);max-width:44ch}
+
+/* ACCORDION */
+.acc{display:flex;gap:10px;height:min(72vh,640px);margin-top:50px}
+.pn{position:relative;flex:1;border-radius:18px;overflow:hidden;border:1px solid var(--line);cursor:pointer;transition:flex .8s var(--ease),border-color .4s;background:var(--deep)}
+.pn.open{flex:6;border-color:var(--gold)}
+.pn img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.7) brightness(.62);transition:filter .8s,transform 1.2s var(--ease);transform:scale(1.08)}
+.pn.open img{filter:saturate(1) brightness(.85);transform:scale(1)}
+.pn::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(11,16,38,.15),rgba(11,16,38,.9))}
+.pn .in{position:absolute;z-index:2;left:0;right:0;bottom:0;padding:26px 28px;display:flex;flex-direction:column;gap:8px}
+.pn .n{font:900 40px/1 var(--font-d);color:var(--gold)}
+.pn h3{font-size:clamp(22px,2.6vw,36px);white-space:nowrap}
+.pn:not(.open) h3{writing-mode:vertical-rl;transform:rotate(180deg);align-self:flex-start;font-size:22px}
+.pn .more{max-height:0;opacity:0;overflow:hidden;transition:max-height .8s var(--ease),opacity .6s .15s}
+.pn.open .more{max-height:260px;opacity:1}
+.pn .more p{color:var(--ink);font-size:16px;max-width:52ch;margin-top:4px}
+.pn .more ul{list-style:none;display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.pn .more li{font:700 11px var(--font-d);letter-spacing:.14em;text-transform:uppercase;border:1px solid rgba(234,240,255,.35);padding:7px 13px;border-radius:999px}
+
+/* ASTEROIDS */
+.ast{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.track{position:relative;height:380px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:linear-gradient(rgba(11,16,38,.35),rgba(11,16,38,.55)),url(images/orion.jpg) center/cover}
+.rock{position:absolute;left:-60px;fill:var(--ink-dim);animation:fly linear infinite}
+.rock:nth-child(1){top:20%;width:36px;animation-duration:14s}
+.rock:nth-child(2){top:45%;width:22px;animation-duration:9s;animation-delay:-3s}
+.rock:nth-child(3){top:68%;width:50px;animation-duration:20s;animation-delay:-8s}
+.rock:nth-child(4){top:32%;width:16px;animation-duration:7s;animation-delay:-5s}
+.rock:nth-child(5){top:80%;width:28px;animation-duration:12s;animation-delay:-1s}
+.rock:nth-child(6){top:10%;width:20px;animation-duration:16s;animation-delay:-11s}
+@keyframes fly{to{transform:translateX(100vw)}}
+.track .tgt{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.track .tgt div{width:140px;height:140px;border:1px solid var(--gold);border-radius:50%;animation:pulse 3s ease-in-out infinite;display:grid;place-items:center;font:900 62px var(--font-d);color:var(--gold)}
+.track .tgt small{position:absolute;bottom:18px;font:700 10px var(--font-d);letter-spacing:.3em;color:var(--ink-dim)}
+
+/* EVENTS */
+.mission{display:grid;grid-template-columns:auto 1fr;gap:50px;align-items:center;padding:44px;border:1px dashed var(--gold);border-radius:var(--r);background:rgba(245,166,35,.04);margin-top:50px}
+.radar{width:180px;height:180px}
+.sweep{transform-origin:95px 95px;animation:spin 3.5s linear infinite}
+.mission h3{font-size:28px;margin-bottom:10px}
+.mission p{color:var(--ink-dim);max-width:52ch}
+/* STRIPS (draggable) */
+.hs,.strip{overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--gold) transparent;cursor:grab;-webkit-overflow-scrolling:touch}
+.hs.drag,.strip.drag{cursor:grabbing;scroll-snap-type:none}
+.hs.drag *,.strip.drag *{user-select:none;pointer-events:none}
+.hs{padding-bottom:22px}
+.strip{display:flex;gap:18px;padding-bottom:24px;margin-top:40px;scroll-snap-type:x proximity}
+.drag-hint{font:700 10px var(--font-d);letter-spacing:.26em;color:var(--ink-dim);text-transform:uppercase;margin:14px 0 0}
+.ev{flex:0 0 min(400px,84vw);scroll-snap-align:start;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--deep);transition:border-color .4s,transform .5s var(--ease)}
+.ev:hover{border-color:var(--gold);transform:translateY(-6px)}
+.ev .ph{position:relative;overflow:hidden;height:230px;background:radial-gradient(circle at 30% 30%,var(--mid),var(--night))}
+.ev .ph img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.ev:hover .ph img{transform:scale(1.07)}
+.ev .ph .big{position:absolute;inset:0;display:grid;place-items:center;font:900 clamp(54px,7vw,90px)/1 var(--font-d);color:transparent;-webkit-text-stroke:1px rgba(245,166,35,.6);text-align:center;padding:20px}
+.ev .tx{padding:24px 26px 28px;display:flex;flex-direction:column;gap:10px}
+.ev time{font:700 11px var(--font-d);letter-spacing:.22em;color:var(--gold)}
+.ev h3{font-size:22px}
+.ev p{color:var(--ink-dim);font-size:15px;line-height:1.6}
+.ev .pl{font:700 10px var(--font-d);letter-spacing:.16em;color:var(--ink);text-transform:uppercase}
+
+
+/* NEWS */
+.news{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:56px}
+.post{border-top:1px solid var(--line);padding-top:26px;transition:border-color .4s}
+.post:hover{border-color:var(--gold)}
+.post time{font:700 11px var(--font-d);letter-spacing:.2em;color:var(--gold)}
+.post h3{font-size:22px;margin:14px 0 12px;line-height:1.25}
+.post p{color:var(--ink-dim);font-size:15.5px}
+
+/* OBSERVER */
+.obs{isolation:isolate;overflow:hidden}
+.bgphoto{position:absolute;inset:0;z-index:-1;background-size:cover;background-position:center;opacity:.5}
+.bgphoto::after{content:"";position:absolute;inset:0;background:linear-gradient(var(--night),rgba(11,16,38,.4) 30%,rgba(11,16,38,.4) 70%,var(--night))}
+.obs-g{display:grid;grid-template-columns:.8fr 1.2fr;gap:60px;align-items:center;margin-top:50px}
+.moonbox{border:1px solid var(--line);border-radius:var(--r);padding:30px;background:rgba(11,16,38,.6);backdrop-filter:blur(8px);text-align:center}
+.moon{width:min(300px,80%);margin:auto;aspect-ratio:1}
+.sky-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.sk{border:1px solid var(--line);border-radius:var(--r);padding:22px;background:rgba(11,16,38,.6);backdrop-filter:blur(8px)}
+.sk small{font:700 10px var(--font-d);letter-spacing:.22em;color:var(--ink-dim);display:block;margin-bottom:10px}
+.sk b{font:800 24px var(--font-d);display:block;line-height:1.15}
+.sk span{font-size:13.5px;color:var(--ink-dim)}
+.kit{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:60px}
+.kt{border:1px solid var(--line);border-radius:var(--r);padding:26px;background:rgba(20,28,69,.55);backdrop-filter:blur(8px);transition:.4s var(--ease)}
+.kt:hover{border-color:var(--gold);transform:translateY(-6px)}
+.kt i{font:900 34px var(--font-d);font-style:normal;color:var(--gold);display:block;margin-bottom:10px}
+.kt h4{font-size:19px;margin-bottom:8px}
+.kt p{font-size:14.5px;color:var(--ink-dim);line-height:1.6}
+
+/* PARTNERS */
+.parts{display:flex;flex-wrap:wrap;gap:14px;margin-top:48px;align-items:center}
+.part{padding:14px 24px;border:1px solid var(--line);border-radius:999px;font:700 13px var(--font-d);letter-spacing:.06em;color:var(--ink-dim);transition:.4s var(--ease)}
+.part:hover{color:var(--night);background:var(--gold);border-color:var(--gold);transform:translateY(-4px) rotate(-1.5deg)}
+.partlogo{display:flex;align-items:center;justify-content:center;height:84px;padding:14px 26px;background:#F4F6FF;border-radius:14px;transition:transform .4s var(--ease)}
+.partlogo:hover{transform:translateY(-5px)}
+.partlogo img{max-height:56px;width:auto;object-fit:contain}
+
+/* FAQ + JOIN */
+.join{isolation:isolate;overflow:hidden}
+.join-g{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:start}
+details{border-top:1px solid var(--line);padding:18px 0}
+details:last-of-type{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;font:700 16px var(--font-d);list-style:none;display:flex;justify-content:space-between;gap:20px;min-height:44px;align-items:center}
+summary::after{content:"+";color:var(--gold);font-size:24px;transition:transform .3s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--ink-dim);margin-top:10px;font-size:15.5px}
+form{display:grid;align-content:start;gap:22px;padding:34px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(160deg,rgba(28,42,94,.55),rgba(11,16,38,.7));backdrop-filter:blur(10px);box-shadow:0 30px 80px rgba(0,0,0,.35)}
+form .row{display:grid;grid-template-columns:1.3fr 1fr;gap:18px}
+.fld{position:relative}
+label{font:700 10px var(--font-d);letter-spacing:.24em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:6px}
+input,select,textarea{width:100%;min-height:48px;background:rgba(234,240,255,.04);border:0;border-bottom:1px solid var(--line);border-radius:10px 10px 0 0;color:var(--ink);font:16px var(--font-b);padding:12px 14px;transition:border-color .3s,background .3s,box-shadow .3s}
+input::placeholder,textarea::placeholder{color:rgba(169,180,219,.55)}
+textarea{min-height:120px;resize:vertical}
+select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:40px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1l6 6 6-6' fill='none' stroke='%23F5A623' stroke-width='1.8' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 16px center}
+select option{background:var(--deep);color:var(--ink)}
+input:hover,select:hover,textarea:hover{background:rgba(234,240,255,.07)}
+input:focus,select:focus,textarea:focus{outline:none;border-bottom-color:var(--gold);background:rgba(245,166,35,.07);box-shadow:0 8px 24px -12px rgba(245,166,35,.55)}
+.btn.sm{min-height:46px;padding:0 24px;font-size:13px;justify-self:start;width:auto}
+.btn.sm svg{width:18px;height:18px}
+@media (max-width:620px){form{padding:22px}form .row{grid-template-columns:1fr}.btn.sm{width:100%}}
+.err{color:#FF9B8A;font-size:13px;min-height:0;margin-top:4px}
+.fb{font-size:13px;color:var(--ink-dim)}
+footer{position:relative;border-top:1px solid var(--line);padding:90px 0 0;background:linear-gradient(rgba(11,16,38,.85),rgba(5,8,22,.98));overflow:hidden}
+.fbig{position:absolute;left:50%;bottom:-.22em;transform:translateX(-50%);font:900 clamp(160px,30vw,440px)/1 var(--font-d);letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1px rgba(245,166,35,.16);pointer-events:none;user-select:none;white-space:nowrap}
+.ftop{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;flex-wrap:wrap;padding-bottom:56px;border-bottom:1px solid var(--line);position:relative}
+.ftop h2{font-size:clamp(34px,5vw,64px);max-width:14ch}
+.fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;padding:56px 0 70px;position:relative}
+.fbrand{display:flex;gap:16px;align-items:flex-start}
+.fbrand img{width:68px;height:68px;flex:none}
+.fbrand strong{font:800 18px var(--font-d);letter-spacing:.08em;display:block;margin-bottom:6px}
+.fbrand p{color:var(--ink-dim);font-size:14.5px;line-height:1.6;max-width:30ch}
+.fcol h4{font:700 11px var(--font-d);letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+.fcol ul{list-style:none;display:grid;gap:4px}
+.fcol a{color:var(--ink-dim);font-size:15px;display:inline-flex;align-items:center;min-height:36px;transition:color .3s,transform .3s var(--ease)}
+.fcol a:hover{color:var(--ink);transform:translateX(5px)}
+.soc{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.soc a{width:48px;height:48px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--ink);transition:background .3s,color .3s,border-color .3s,transform .4s var(--ease),box-shadow .3s}
+.soc a:hover{background:var(--gold);color:var(--night);border-color:var(--gold);transform:translateY(-5px) rotate(-6deg);box-shadow:0 10px 30px rgba(245,166,35,.35)}
+.soc svg{width:21px;height:21px}
+.fbar{position:relative;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-top:1px solid var(--line);padding:22px 0 26px;font-size:13px;color:var(--ink-dim)}
+.fbar a{color:var(--ink-dim);text-decoration:underline;text-underline-offset:3px}
+.totop{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--ink);font:700 11px var(--font-d);letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:.3s}
+.totop:hover{border-color:var(--gold);color:var(--gold)}
+@media (max-width:980px){.fgrid{grid-template-columns:1fr 1fr}.fbrand{grid-column:1/-1}}
+@media (max-width:620px){.fgrid{grid-template-columns:1fr}}
+
+#cur{position:fixed;left:0;top:0;width:42px;height:42px;z-index:200;pointer-events:none;opacity:0;transition:opacity .3s;will-change:transform}
+#cur svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#cur .rk{transform-origin:50% 55%;filter:drop-shadow(0 0 7px rgba(245,166,35,.55));transition:opacity .25s,scale .3s var(--ease)}
+#cur .flame{transform-box:fill-box;transform-origin:50% 0;transform:scaleY(var(--f,.4));animation:flick .14s infinite alternate}
+@keyframes flick{to{opacity:.72}}
+#cur .st{opacity:0;scale:.3;filter:drop-shadow(0 0 10px rgba(245,166,35,.9));transition:opacity .25s,scale .35s var(--ease)}
+#cur.big .rk{opacity:0;scale:.5}
+#cur.big .st{opacity:1;scale:1.25;animation:spinst 5s linear infinite}
+@keyframes spinst{to{rotate:360deg}}
+.has-cur,.has-cur *{cursor:none!important}
+.has-cur input,.has-cur textarea,.has-cur select{cursor:text!important}
+
+/* TRAJECTOIRE + ROLES + ARTICLES */
+.traj{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative}
+.traj::before{content:"";position:absolute;left:0;right:0;top:19px;height:1px;background:var(--line)}
+.traj li{position:relative;padding:50px 18px 0 0}
+.traj li::before{content:"";position:absolute;left:0;top:14px;width:11px;height:11px;border-radius:50%;background:var(--gold);box-shadow:0 0 16px var(--gold)}
+.traj b{font:900 34px var(--font-d);color:var(--gold);display:block}
+.traj h4{font-size:19px;margin:8px 0}
+.traj p{color:var(--ink-dim);font-size:14.5px;line-height:1.6}
+.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.role{border:1px solid var(--line);border-radius:var(--r);padding:26px;background:rgba(20,28,69,.45);transition:.4s var(--ease)}
+.role:hover{border-color:var(--gold);transform:translateY(-6px)}
+.role i{font:900 30px var(--font-d);font-style:normal;color:var(--gold);display:block;margin-bottom:12px}
+.role h4{font-size:20px;margin-bottom:8px}
+.role p{color:var(--ink-dim);font-size:15px}
+.arts{margin-top:50px;border-top:1px solid var(--line)}
+.art{border-bottom:1px solid var(--line)}
+.art summary{display:grid;grid-template-columns:150px 90px 1fr 30px;gap:20px;align-items:center;padding:26px 0;cursor:pointer;list-style:none;transition:color .3s}
+.art summary::-webkit-details-marker{display:none}
+.art summary::after{content:"+";font:400 28px var(--font-d);color:var(--gold);justify-self:end;transition:transform .35s var(--ease)}
+.art[open] summary::after{transform:rotate(45deg)}
+.art summary:hover h3{color:var(--gold)}
+.art summary time{font:700 11px var(--font-d);letter-spacing:.2em;color:var(--gold)}
+.art .src{font:700 10px var(--font-d);letter-spacing:.18em;border:1px solid var(--line);border-radius:999px;padding:5px 10px;text-align:center;color:var(--ink-dim)}
+.art summary h3{font-size:clamp(19px,2.2vw,26px);line-height:1.25;font-weight:800;transition:color .3s}
+.art .body{padding:0 0 34px 260px;max-width:960px;animation:artin .5s var(--ease)}
+.art .body p{color:var(--ink-dim);margin-bottom:14px;font-size:16.5px}
+.art .body ul{margin:0 0 16px 20px;color:var(--ink-dim)}
+.art .body li{margin-bottom:6px;font-size:16px}
+.art .body a{color:var(--gold);font:700 13px var(--font-d);letter-spacing:.06em}
+.art .body a:hover{text-decoration:underline}
+@keyframes artin{from{opacity:0;transform:translateY(-10px)}}
+@media (max-width:980px){.traj{grid-template-columns:1fr 1fr;gap:34px 20px}.traj::before{display:none}.roles{grid-template-columns:1fr 1fr}.art summary{grid-template-columns:1fr 30px;gap:8px 12px}.art summary time{grid-column:1}.art summary .src{display:none}.art summary h3{grid-column:1}.art summary::after{grid-row:1/3;grid-column:2}.art .body{padding-left:0}}
+@media (max-width:620px){.traj,.roles{grid-template-columns:1fr}}
+
+/* RESPONSIVE / FALLBACK */
+@media (max-width:980px){
+  .links{display:none}.burger{display:block}
+  #rail{display:none}
+  .stats{grid-template-columns:1fr 1fr}
+  .founding,.ast,.obs-g,.join-g{grid-template-columns:1fr;gap:40px}
+  .miss,.kit{grid-template-columns:1fr 1fr}
+  .news{grid-template-columns:1fr}
+  .mission{grid-template-columns:1fr;padding:30px;gap:26px}
+  .hero-copy{top:auto;bottom:90px;transform:none}
+  .hero-copy .coords{display:none}
+  .hero-copy .lead{font-size:16px}
+  .slides{height:auto;overflow:visible;padding:100px 0 40px}
+  .sl-head{position:static;margin:0 24px 30px}
+  .sl-stage{height:auto}
+  .sl{position:static;grid-template-columns:1fr;padding:0 24px;margin-bottom:70px;gap:24px}
+  .sl .tx .num{font-size:90px}
+  .sl .pic{height:300px}
+  .hs{overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:20px}
+  .pcard{scroll-snap-align:center}
+  .ev{position:static;grid-template-columns:1fr;min-height:0}
+}
+@media (max-width:620px){
+  body{font-size:16px}
+  .stats{margin-top:0}.stat{padding:24px 16px}
+  .miss,.kit,.sky-grid{grid-template-columns:1fr}
+  .btn{width:100%}
+  .scrollcue{display:none}
+}
+@media (hover:none){#cur{display:none}}
+.nomotion .rv,.nomotion .mask>span{opacity:1!important;transform:none!important}
+.nomotion .manif .w{opacity:1}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}}
+
+/* ===== RESPONSIVE MOBILE (ajout) ===== */
+html,body{max-width:100%;overflow-x:hidden}
+@media (max-width:980px){
+  .hero-copy{left:20px;right:20px;width:auto;top:auto;bottom:78px;transform:none;max-width:620px}
+  .hero-copy .lbl{font-size:10px;letter-spacing:.2em;margin-bottom:12px}
+  .hero-copy .lbl::before{width:22px}
+  .hero-copy h1{font-size:clamp(30px,8.6vw,56px)}
+  .hero-copy .lead{font-size:15px;line-height:1.55;margin-top:12px}
+  .cta{flex-wrap:nowrap;gap:10px;margin-top:20px}
+  .cta .btn{flex:1;width:auto;min-height:46px;padding:0 12px;font-size:12.5px;white-space:nowrap}
+  .skip{right:20px;left:auto;bottom:18px;width:auto;min-height:38px;font-size:11px;padding:0 14px}
+  .hud{left:20px;bottom:30px;font-size:9px;letter-spacing:.22em}
+  .final p{font-size:16px}
+}
+@media (max-width:980px) and (orientation:portrait){
+  .vig{background:radial-gradient(ellipse at 50% 30%,transparent 35%,rgba(11,16,38,.82))}
+}
+@media (max-height:520px) and (orientation:landscape){
+  .hero-copy{right:auto;width:46%;top:50%;bottom:auto;transform:translateY(-50%)}
+  .hero-copy .lead,.hero-copy .lbl{display:none}
+  .hero-copy h1{font-size:clamp(26px,5.4vw,44px)}
+  .cta{margin-top:14px}.cta .btn{min-height:40px;flex:none;padding:0 16px}
+  .scrollcue{display:none}
+}
+@media (max-width:760px){
+  body{font-size:16px}
+  .wrap{width:calc(100% - 40px)}
+  .pad{padding:72px 0}
+  h2{font-size:clamp(28px,8vw,40px);max-width:none}
+  .lead{font-size:16px}
+  .lbl{font-size:10.5px;letter-spacing:.2em}
+  #rail{display:none}
+  .nav{height:68px}.logo img{width:38px;height:38px}.logo{font-size:17px}.logo small{font-size:8px;letter-spacing:.14em}
+  /* hub */
+  .const{height:auto;padding:14px 14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+  .cl{display:none}
+  .const .cpanel{position:static;grid-column:1/-1;max-width:none;margin-bottom:6px}
+  .star{position:static;transform:none;flex-direction:row;justify-content:flex-start;gap:12px;padding:8px 6px;min-height:48px;border:1px solid var(--line);border-radius:14px;background:rgba(11,16,38,.5)}
+  .star span{font-size:11px;letter-spacing:.06em;white-space:normal;text-align:left}
+  .star.big{grid-column:1/-1}
+  .star i{width:12px;height:12px;flex:none}
+  /* globe */
+  .globe-g{grid-template-columns:1fr;gap:34px}
+  .globewrap{max-width:360px}
+  /* manifeste */
+  .manif p{font-size:clamp(24px,7vw,34px)}
+  .manif{min-height:auto;padding:70px 0}
+  .stats{grid-template-columns:1fr 1fr}.stat b{font-size:34px}
+  /* équipe */
+  .founding{margin-bottom:50px}
+  .pcard{width:78vw}
+  .hs-track{padding:0 20px;gap:16px}
+  /* missions */
+  .miss{grid-template-columns:1fr;gap:26px;margin-top:40px}
+  .traj{grid-template-columns:1fr;gap:26px}
+  .traj li{padding:0 0 0 30px;border-left:1px solid var(--line)}
+  .traj li::before{top:6px;left:-6px}
+  .traj::before{display:none}
+  .roles{grid-template-columns:1fr}
+  .goal{padding:26px;gap:18px}
+  /* activités : accordéon vertical */
+  .acc{flex-direction:column;height:auto;gap:8px}
+  .pn{flex:none;height:76px;transition:height .7s var(--ease),border-color .4s}
+  .pn.open{height:460px}
+  .pn:not(.open) h3{writing-mode:horizontal-tb;transform:none;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pn .in{padding:18px 20px}
+  .pn:not(.open) .in{flex-direction:row;align-items:center;gap:14px;bottom:0;top:0}
+  .pn .n{font-size:28px}
+  .pn.open h3{white-space:normal}
+  /* astéroïdes */
+  .track{height:260px}
+  .track .tgt div{width:110px;height:110px;font-size:46px}
+  /* événements */
+  .mission{padding:26px}.radar{width:140px;height:140px}
+  .ev{flex-basis:84vw}
+  .ev .ph{height:190px}
+  /* journal */
+  .arts{margin-top:34px}
+  .art summary{padding:20px 0}
+  /* observer */
+  .obs-g{gap:26px}
+  .sky-grid{grid-template-columns:1fr 1fr}
+  .kit{grid-template-columns:1fr}
+  /* partenaires */
+  .parts{gap:10px}.part{padding:12px 16px;font-size:12px}
+  .partlogo{height:68px;padding:12px 18px}
+  /* footer */
+  footer{padding-top:60px}
+  .ftop{padding-bottom:36px}
+  .ftop .btn{width:100%}
+  .fgrid{padding:36px 0 44px;gap:32px}
+  .fbar{flex-direction:column;align-items:flex-start}
+  .totop{width:100%;justify-content:center}
+}
+@media (max-width:420px){
+  .stats{grid-template-columns:1fr 1fr}.stat{padding:20px 14px}.stat span{font-size:10.5px}
+  .sky-grid{grid-template-columns:1fr}
+  .const{grid-template-columns:1fr}
+  .cta .btn{font-size:12px;padding:0 8px}
+  .pn.open{height:500px}
+}
+@media (max-width:360px){
+  .hero-copy .lead{font-size:14px;line-height:1.5}
+}
+@media (max-width:340px){
+  .hero-copy h1{font-size:28px}
+  .logo small{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="splash" aria-hidden="true">
+  <div class="reticle">
+    <svg viewBox="0 0 180 180"><circle class="rg r1" cx="90" cy="90" r="86"/><circle class="rg r2" cx="90" cy="90" r="78" stroke-dasharray="30 12"/></svg>
+    <img src="images/logo-256.png" alt="" style="position:absolute;inset:22px;width:136px;height:136px;animation:pulse 2.4s ease-in-out infinite">
+    <div class="sp-txt">ALIGNEMENT …</div>
+  </div>
+</div>
+<div id="prog"></div>
+<div id="cur" aria-hidden="true">
+  <svg class="rk" viewBox="0 0 40 40"><g class="flame"><path d="M16.500 27 Q20 44 23.500 27Z" fill="#F5A623"/><path d="M18.300 27 Q20 37 21.700 27Z" fill="#FFE2A8"/></g><path d="M15 21 L8 30 L15 27.500Z M25 21 L32 30 L25 27.500Z" fill="#F5A623"/><path d="M20 2 C26.500 8.500 27.500 18 25.500 27.500 H14.500 C12.500 18 13.500 8.500 20 2Z" fill="#EAF0FF"/><path d="M20 2 C23 5 24.500 8 25 11 H15 C15.500 8 17 5 20 2Z" fill="#F5A623"/><circle cx="20" cy="16" r="3.200" fill="#0B1026" stroke="#F5A623" stroke-width="1.500"/></svg>
+  <svg class="st" viewBox="0 0 40 40"><path d="M20 2 L24.500 14.500 L38 15.500 L27.500 24 L31 37 L20 29.500 L9 37 L12.500 24 L2 15.500 L15.500 14.500Z" fill="#F5A623" stroke="#FFE2A8" stroke-width="1" stroke-linejoin="round"/></svg>
+</div>
+<canvas id="sky"></canvas>
+
+<header id="hd">
+  <div class="wrap nav">
+    <a href="#top" class="logo" aria-label="AIA, accueil"><img src="images/logo-256.png" alt="Logo AIA" width="44" height="44"><span>AIA<small>ASTRONOMIE · CÔTE D'IVOIRE</small></span></a>
+    <nav class="links" aria-label="Navigation principale">
+      <a href="#asso">L'association</a><a href="#equipe">Équipe</a><a href="#activites">Activités</a><a href="#evenements">Événements</a><a href="#observer">Observer</a><a href="#rejoindre" class="btn ghost" style="min-height:42px;padding:0 20px">Rejoindre</a>
+    </nav>
+    <button class="burger" id="bg" aria-label="Ouvrir le menu"><span></span><span></span></button>
+  </div>
+</header>
+<div id="ov" role="dialog" aria-label="Menu">
+  <button id="ovx" aria-label="Fermer">×</button>
+  <a href="#asso">L'<em>association</em></a><a href="#equipe">Équipe</a><a href="#activites">Activités</a><a href="#evenements">Événements</a><a href="#observer">Observer</a><a href="#rejoindre"><em>Rejoindre</em></a>
+</div>
+<div id="rail" aria-hidden="true"><span>ALTITUDE</span><span id="alt">400 km</span><div class="bar"><i id="dot"></i></div></div>
+
+<main id="top">
+
+<!-- HERO : télescope 3D -->
+<section id="hero">
+  <div class="stage" id="stage">
+    <canvas id="scope" aria-hidden="true"></canvas>
+    <div class="vig"></div>
+    <div class="hero-copy" id="hcopy">
+      <div class="lbl">Association Ivoirienne d'Astronomie</div>
+      <h1><span class="mask"><span>Le ciel</span></span><span class="mask"><span>commence <em>ici.</em></span></span></h1>
+      <p class="lead rv">Depuis 2021, nous emmenons la Côte d'Ivoire lever les yeux : télescopes ouverts à tous, clubs dans les lycées, conférences et chasse aux astéroïdes depuis Abidjan.</p>
+      <div class="cta rv"><a class="btn solid" href="#hub">Explorer le site ↓</a><a class="btn ghost" href="#rejoindre">Rejoindre l'AIA</a></div>
+    </div>
+    <div id="tags" aria-hidden="true">
+      <div class="tg" data-i="0"><i class="ln"></i><i class="dt"></i><small>01</small><b>Pare-buée</b><span>Protège l'objectif de la rosée et des lumières parasites.</span></div>
+      <div class="tg" data-i="1"><i class="ln"></i><i class="dt"></i><small>02</small><b>Objectif</b><span>La lentille qui capte la lumière des astres lointains.</span></div>
+      <div class="tg" data-i="2"><i class="ln"></i><i class="dt"></i><small>03</small><b>Chercheur</b><span>Un petit viseur pour trouver l'astre avant de zoomer.</span></div>
+      <div class="tg" data-i="3"><i class="ln"></i><i class="dt"></i><small>04</small><b>Porte-oculaire</b><span>La molette qui règle la mise au point avec précision.</span></div>
+      <div class="tg" data-i="4"><i class="ln"></i><i class="dt"></i><small>05</small><b>Oculaire</b><span>Là où ton œil rencontre enfin le ciel.</span></div>
+      <div class="tg" data-i="5"><i class="ln"></i><i class="dt"></i><small>06</small><b>Tube optique</b><span>Noir à l'intérieur, pour que seule la bonne lumière passe.</span></div>
+      <div class="tg" data-i="6"><i class="ln"></i><i class="dt"></i><small>07</small><b>Monture</b><span>Son axe est incliné à 5,36° : la latitude d'Abidjan.</span></div>
+      <div class="tg" data-i="7"><i class="ln"></i><i class="dt"></i><small>08</small><b>Trépied</b><span>Stable, pour suivre les étoiles sans trembler.</span></div>
+    </div>
+    <div class="final" id="final"><div><h2>Regarde.</h2><p>Le ciel d'Abidjan est à toi.</p></div></div>
+    <div class="flash" id="flash"></div>
+    <div class="hud" id="hud">VUE ÉCLATÉE · 0 %</div>
+    <button class="skip btn ghost" id="skip" type="button">Passer l'intro ↓</button>
+    <div class="scrollcue" id="cue">DÉFILER<i></i></div>
+  </div>
+</section>
+
+<!-- HUB : navigation libre -->
+<section id="hub" class="pad hub">
+  <div class="wrap">
+    <div class="lbl rv">Explorer librement</div>
+    <h2 class="rv">Où veux-tu <em>aller ?</em></h2>
+    <p class="lead rv">Pas de parcours imposé : choisis une étoile et le site t'y emmène.</p>
+    <div class="const rv" id="const">
+      <svg class="cl" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true"><polyline id="cline" points="120,177 300,374 460,156 630,354 780,135 900,322" fill="none" stroke="rgba(245,166,35,.55)" stroke-width="1.2"/></svg>
+      <a class="star" href="#asso" style="left:12%;top:34%" data-d="Notre histoire, notre mission, notre trajectoire."><i></i><span>L'association</span></a>
+      <a class="star" href="#equipe" style="left:30%;top:72%" data-d="Le président, les vice-présidents et les chercheurs du bureau."><i></i><span>L'équipe</span></a>
+      <a class="star" href="#activites" style="left:46%;top:30%" data-d="Observer, former, photographier, chasser les astéroïdes."><i></i><span>Les activités</span></a>
+      <a class="star" href="#evenements" style="left:63%;top:68%" data-d="AstroTour, AstroPause, Café des Savoirs : tout ce qu'on a vécu."><i></i><span>Les événements</span></a>
+      <a class="star" href="#journal" style="left:78%;top:26%" data-d="12 articles : le site de l'AIA et la presse."><i></i><span>Le journal</span></a>
+      <a class="star" href="#observer" style="left:90%;top:62%" data-d="La Lune de ce soir et comment bien débuter."><i></i><span>Observer</span></a>
+      <a class="star big" href="#rejoindre" style="left:76%;top:90%" data-d="Une question, une envie ? Écris-nous."><i></i><span>Rejoindre</span></a>
+      <div class="cpanel" id="cpanel"><b>Survole une étoile</b><span>Chaque point est une section du site.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTE -->
+<section id="asso" class="manif">
+  <div class="wrap"><p id="manif">Le 13 février 2021, à l'Université Félix Houphouët-Boigny, des passionnés ont décidé de <b class="gw">réconcilier les Ivoiriens avec les sciences.</b> Depuis, nous emmenons élèves, étudiants et curieux sous le ciel d'Abidjan, avec un rêve : <b class="gw">bâtir l'observatoire national.</b></p></div>
+</section>
+<section class="pad" style="padding-top:0">
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat rv"><b data-n="2021" data-plain="1">0</b><span>ANNÉE DE FONDATION</span></div>
+      <div class="stat rv"><b data-n="5">0</b><span>CLUBS D'ASTRONOMIE</span></div>
+      <div class="stat rv"><b data-n="10000" data-plus="1">0</b><span>PERSONNES SENSIBILISÉES</span></div>
+      <div class="stat rv"><b data-n="6">0</b><span>ASTÉROÏDES DÉTECTÉS</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPUIS ABIDJAN : globe -->
+<section id="depuis" class="pad">
+  <div class="wrap globe-g">
+    <div>
+      <div class="lbl rv">Depuis Abidjan</div>
+      <h2 class="rv">Un point doré sur <em>la Terre.</em></h2>
+      <p class="lead rv">À 5° de latitude nord, Abidjan voit presque tout le ciel : les étoiles du nord comme celles du sud. C'est d'ici que l'AIA observe, forme et cherche des astéroïdes.</p>
+      <div class="coords rv"><div>LATITUDE<b>5°21′ N</b></div><div>LONGITUDE<b>4°01′ O</b></div><div>ALTITUDE<b>18 m</b></div></div>
+    </div>
+    <div class="globewrap rv" id="globe"><canvas id="globec" aria-label="Globe terrestre interactif centré sur Abidjan" role="img"></canvas><div class="earthtag" id="etag">ABIDJAN<b>5°21′ N · 4°01′ O</b></div><p class="ghint">Fais glisser pour tourner la Terre</p></div>
+  </div>
+</section>
+
+<div class="mq" aria-hidden="true"><div class="t" id="mq1">ASTRONOMIE<b>✦</b>ASTROPHOTOGRAPHIE<b>✦</b>ASTÉROÏDES<b>✦</b>OBSERVATOIRE<b>✦</b>CÔTE D'IVOIRE<b>✦</b>ASTRONOMIE<b>✦</b>ASTROPHOTOGRAPHIE<b>✦</b></div></div>
+
+<!-- ÉQUIPE -->
+<section id="equipe" class="pad" style="padding-bottom:40px">
+  <div class="wrap">
+    <div class="founding">
+      <div>
+        <div class="lbl rv">Ceux qui font l'AIA</div>
+        <h2 class="rv">Des chercheurs et des enseignants <em>derrière chaque télescope.</em></h2>
+        <p class="lead rv">Tout est parti d'une assemblée générale, le 13 février 2021, à Abidjan-Cocody. Le Dr Aziz Diaby, chercheur en physique spatiale, y est élu président pour six ans. Il fonde l'AIA avec une idée simple : donner aux jeunes ivoiriens le goût des sciences de l'Univers.</p>
+      </div>
+      <figure class="imgw rv" style="aspect-ratio:4/3"><img src="images/ag-2021.jpg" alt="Assemblée générale de l'AIA, février 2021, Université Félix Houphouët-Boigny" loading="lazy" width="959" height="719"><figcaption><b>Assemblée générale constitutive · 13 février 2021</b>Université Félix Houphouët-Boigny, Abidjan-Cocody.</figcaption></figure>
+    </div>
+  </div>
+  <p class="drag-hint wrap" style="padding:0 0 14px">Fais glisser pour parcourir l'équipe →</p>
+  <div class="hs" id="hs"><div class="hs-track" id="hstrack">
+    <article class="pcard"><div class="pph"><img src="images/p-diaby.jpg" alt="Dr Aziz Diaby" loading="lazy" width="473" height="419"><span class="badge">FONDATEUR</span></div>
+      <div class="pbody"><small>Fondateur · Président</small><h3>Dr Aziz Diaby</h3><p>Chercheur en physique spatiale, spécialiste de l'ionosphère, et enseignant de physique-chimie. Il a présenté ses travaux en Italie, en Inde, aux États-Unis et à Chypre. Élu président de l'AIA pour six ans en 2021.</p></div></article>
+    <article class="pcard"><div class="pph"><svg class="cst" viewBox="0 0 300 300" aria-hidden="true"><path d="M40 220 L110 150 L170 175 L240 70" fill="none" stroke="#F5A623" stroke-width="1.2"/><g fill="#F5A623"><circle cx="40" cy="220" r="4"/><circle cx="110" cy="150" r="5"/><circle cx="170" cy="175" r="4"/><circle cx="240" cy="70" r="5"/></g></svg><div class="mono">MY</div></div>
+      <div class="pbody"><small>Premier vice-président</small><h3>Dr Marc Harris Yao</h3><p>Astrophysicien, enseignant-chercheur à l'Université Félix Houphouët-Boigny. Il présente l'AIA et porte le développement de l'astronomie ivoirienne : observations publiques, clubs dans les lycées, campagnes d'astéroïdes.</p></div></article>
+    <article class="pcard"><div class="pph"><svg class="cst" viewBox="0 0 300 300" aria-hidden="true"><path d="M50 90 L120 130 L150 220 L250 190 L230 80" fill="none" stroke="#F5A623" stroke-width="1.2"/><g fill="#F5A623"><circle cx="50" cy="90" r="4"/><circle cx="120" cy="130" r="5"/><circle cx="150" cy="220" r="4"/><circle cx="250" cy="190" r="5"/><circle cx="230" cy="80" r="4"/></g></svg><div class="mono">PA</div></div>
+      <div class="pbody"><small>Secrétaire général adjoint</small><h3>Dr Pancrace Aka</h3><p>Épistémologue, historien des sciences et logicien, maître-assistant au département de philosophie de l'UFHB. Il a donné la conférence « Agence spatiale ivoirienne : enjeux et défis ».</p></div></article>
+    <article class="pcard"><div class="pph"><svg class="cst" viewBox="0 0 300 300" aria-hidden="true"><path d="M60 200 L100 110 L190 140 L220 60 M190 140 L240 230" fill="none" stroke="#F5A623" stroke-width="1.2"/><g fill="#F5A623"><circle cx="60" cy="200" r="4"/><circle cx="100" cy="110" r="5"/><circle cx="190" cy="140" r="5"/><circle cx="220" cy="60" r="4"/><circle cx="240" cy="230" r="4"/></g></svg><div class="mono">JA</div></div>
+      <div class="pbody"><small>Secrétaire à la communication</small><h3>Dr Jean-Baptiste Ackah</h3><p>Docteur en physique de l'atmosphère et de l'espace (UFHB), ingénieur en météorologie aéronautique à l'ASECNA, membre du programme URSI Young Scientist. Conférence : « Communication satellite, Terre et reconquête de l'espace ».</p></div></article>
+    <article class="pcard"><div class="pph"><svg class="cst" viewBox="0 0 300 300" aria-hidden="true"><path d="M50 210 L120 120 L190 170 L250 60" fill="none" stroke="#F5A623" stroke-width="1.2"/><g fill="#F5A623"><circle cx="50" cy="210" r="4"/><circle cx="120" cy="120" r="5"/><circle cx="190" cy="170" r="4"/><circle cx="250" cy="60" r="5"/></g></svg><div class="mono">DB</div></div>
+      <div class="pbody"><small>Conseiller scientifique</small><h3>Dr David Baratoux</h3><p>Planétologue, directeur de recherche à l'IRD. Partenaire de longue date de l'AIA, il a co-organisé l'AstroTour Ivoire et est intervenu au Café des Savoirs.</p></div></article>
+    <article class="pcard"><div class="pph"><svg class="cst" viewBox="0 0 300 300" aria-hidden="true"><path d="M60 80 L130 150 L90 230 M130 150 L230 130 L250 220" fill="none" stroke="#F5A623" stroke-width="1.2"/><g fill="#F5A623"><circle cx="60" cy="80" r="4"/><circle cx="130" cy="150" r="5"/><circle cx="90" cy="230" r="4"/><circle cx="230" cy="130" r="5"/><circle cx="250" cy="220" r="4"/></g></svg><div class="mono">AS</div></div>
+      <div class="pbody"><small>Secrétaire à l'organisation</small><h3>Ahoua Stéphane</h3><p>Doctorant en physique de l'atmosphère. Il fait voyager le public dans l'espace avec le logiciel de planétarium Stellarium.</p></div></article>
+    <article class="pcard join"><h3>Et toi ?</h3><p>L'AIA grandit grâce à ses membres : élèves, étudiants, enseignants, photographes, curieux. Pas besoin de diplôme, seulement de l'envie.</p><a class="btn solid" href="#rejoindre">Rejoindre l'équipe</a></article>
+  </div></div>
+</section>
+
+<!-- MISSIONS / QUI SOMMES-NOUS -->
+<section id="missions" class="pad">
+  <div class="wrap">
+    <div class="lbl rv">Qui sommes-nous</div>
+    <h2 class="rv">Faire de l'astronomie une affaire <em>ivoirienne.</em></h2>
+    <p class="lead rv">L'AIA a été fondée en 2021 à l'UFR des Sciences des Structures de la Matière et Technologies (SSMT) de l'Université Félix Houphouët-Boigny, à Abidjan. Elle réunit une quarantaine de passionnés, dont dix-sept siègent au bureau : chercheurs, enseignants, étudiants et curieux. Sa raison d'être : réconcilier les Ivoiriens avec les sciences et donner aux jeunes, filles comprises, l'envie de s'y lancer.</p>
+    <div class="miss">
+      <div class="ms rv"><b>01</b><h3>Partager le ciel</h3><p>Observations publiques gratuites, séances d'astrophotographie et conférences ouvertes à tous, sur les esplanades, les campus et les plages.</p></div>
+      <div class="ms rv"><b>02</b><h3>Former la relève</h3><p>Tournées dans les écoles, clubs d'astronomie dans les lycées, accompagnement vers les filières scientifiques, avec une attention particulière pour les jeunes femmes.</p></div>
+      <div class="ms rv"><b>03</b><h3>Faire de la science</h3><p>Campagnes de recherche d'astéroïdes avec l'Union Astronomique Internationale et la NASA, et à terme un observatoire national.</p></div>
+      <div class="ms rv"><b>04</b><h3>Défendre la science</h3><p>Lutter contre la désinformation scientifique avec des faits, des conférences et de la curiosité.</p></div>
+    </div>
+
+    <h3 class="rv" style="font-size:clamp(28px,4vw,48px);margin:100px 0 40px">Notre <em>trajectoire.</em></h3>
+    <ol class="traj">
+      <li class="rv"><b>2021</b><h4>Naissance de l'AIA</h4><p>Assemblée générale du 13 février à l'UFR SSMT. Le Dr Aziz Diaby est élu président. En juillet, trois jours d'observation de la Lune avec On The Moon Again.</p></li>
+      <li class="rv"><b>2022</b><h4>Six astéroïdes</h4><p>Première participation aux campagnes IASC, avec l'UAI et la NASA : six astéroïdes détectés depuis Abidjan, en cours de confirmation au Minor Planet Center.</p></li>
+      <li class="rv"><b>2023</b><h4>AstroPause et AstroTour</h4><p>Café des Savoirs en janvier, première AstroPause en mai, puis l'AstroTour Ivoire en novembre-décembre dans quatre villes. Les clubs scolaires se multiplient.</p></li>
+      <li class="rv"><b>2024+</b><h4>Les clubs essaiment</h4><p>Inauguration du club du Lycée Blaise Pascal avec « Une école, un télescope », nouvelles campagnes d'astéroïdes chaque année, présence à AstroEdu 2025.</p></li>
+      <li class="rv"><b>Demain</b><h4>L'observatoire national</h4><p>Un site permanent, ouvert aux chercheurs, aux étudiants et au public, présenté comme la première pierre d'une future agence spatiale ivoirienne.</p></li>
+    </ol>
+
+    <h3 class="rv" style="font-size:clamp(28px,4vw,48px);margin:100px 0 14px">Le bureau, <em>rôle par rôle.</em></h3>
+    <p class="lead rv" style="margin:0 0 36px;font-size:16px">Six fonctions font tourner l'association au quotidien.</p>
+    <div class="roles">
+      <div class="role rv"><i>⌖</i><h4>Présidence</h4><p>Porte la vision de l'association et la représente auprès des institutions.</p></div>
+      <div class="role rv"><i>☰</i><h4>Secrétariat général</h4><p>Coordonne la vie associative, les adhésions et le lien avec les membres.</p></div>
+      <div class="role rv"><i>◉</i><h4>Observations</h4><p>Planifie les sorties, gère les télescopes et forme les observateurs.</p></div>
+      <div class="role rv"><i>✎</i><h4>Pédagogie &amp; clubs</h4><p>Conçoit les tournées scolaires et accompagne les clubs des lycées.</p></div>
+      <div class="role rv"><i>✦</i><h4>Recherche</h4><p>Anime les campagnes IASC et le suivi des six astéroïdes auprès du Minor Planet Center.</p></div>
+      <div class="role rv"><i>☏</i><h4>Communication</h4><p>Fait connaître l'AIA : réseaux sociaux, presse, site web.</p></div>
+    </div>
+
+    <div class="goal rv"><div><div class="lbl" style="margin-bottom:12px">Le grand projet</div><h3>Un observatoire astronomique national.</h3></div><p>Un lieu permanent, équipé d'instruments de qualité, pour observer, former et faire de la recherche en Côte d'Ivoire. Les cotisations des membres servent à acheter les premiers équipements.</p><a class="btn solid" href="#rejoindre">Soutenir l'AIA</a></div>
+  </div>
+</section>
+
+<!-- ACTIVITÉS : accordéon libre -->
+<section id="activites" class="pad">
+  <div class="wrap">
+    <div class="lbl rv">Sur le terrain</div>
+    <h2 class="rv">Six façons de <em>toucher le ciel.</em></h2>
+    <p class="lead rv">Survole ou touche une bande pour la déplier.</p>
+    <div class="acc rv" id="acc">
+      <article class="pn open" tabindex="0"><img src="images/otma.jpg" alt="Participants à une soirée d'observation de l'AIA" loading="lazy"><div class="in"><span class="n">01</span><h3>Observer</h3><div class="more"><p>Des télescopes en accès libre pour que chacun voie la Lune, les planètes et les étoiles de ses propres yeux, notamment sur le campus de Cocody.</p><ul><li>Gratuit</li><li>Tout public</li><li>Abidjan et au-delà</li></ul></div></div></article>
+      <article class="pn" tabindex="0"><img src="images/blaise-pascal.jpg" alt="Journées de l'espace au Lycée français Blaise Pascal" loading="lazy"><div class="in"><span class="n">02</span><h3>Écoles &amp; clubs</h3><div class="more"><p>Tournées dans les lycées, planétarium mobile, ateliers fusées à eau et création de clubs. Avec « Une école, un télescope » (ASPP-BGS), des élèves découvrent le ciel au télescope.</p><ul><li>5 clubs</li><li>Lycées</li><li>Ateliers</li></ul></div></div></article>
+      <article class="pn" tabindex="0"><img src="images/milkyway-tololo.jpg" alt="La Voie lactée au-dessus d'un observatoire" loading="lazy"><div class="in"><span class="n">03</span><h3>Astrophotographie</h3><div class="more"><p>Photographier le ciel ivoirien, de la Lune à la Voie lactée, et apprendre à le faire avec son téléphone ou un appareil photo.</p><ul><li>Voie lactée</li><li>Lune</li><li>Initiation</li></ul></div></div></article>
+      <article class="pn" tabindex="0"><img src="images/astropause-salle.jpg" alt="Salle de conférence de l'AstroPause" loading="lazy"><div class="in"><span class="n">04</span><h3>Conférences</h3><div class="more"><p>AstroPause, Café des Savoirs : des rendez-vous de vulgarisation avec chercheurs et passionnés. La première AstroPause a réuni une cinquantaine de personnes.</p><ul><li>AstroPause</li><li>Débats</li><li>Questions libres</li></ul></div></div></article>
+      <article class="pn" tabindex="0"><img src="images/orion.jpg" alt="La nébuleuse d'Orion vue par Hubble" loading="lazy"><div class="in"><span class="n">05</span><h3>Astéroïdes</h3><div class="more"><p>Avec l'IASC et la NASA (science citoyenne), élèves et bénévoles analysent des images de télescope et signalent des objets inconnus. Six astéroïdes détectés depuis Abidjan en 2022.</p><ul><li>IASC</li><li>NASA</li><li>Pan-STARRS</li></ul></div></div></article>
+      <article class="pn" tabindex="0"><img src="images/abidjan-nuit.jpg" alt="Abidjan de nuit" loading="lazy"><div class="in"><span class="n">06</span><h3>Observatoire</h3><div class="more"><p>Chaque observation, chaque club, chaque conférence prépare la même ambition : un observatoire national ouvert aux élèves, aux étudiants et aux chercheurs.</p><ul><li>Projet phare</li><li>Recherche</li><li>Formation</li></ul></div></div></article>
+    </div>
+  </div>
+</section>
+
+<!-- ASTÉROÏDES -->
+<section id="asteroides" class="pad">
+  <div class="wrap ast">
+    <div>
+      <div class="lbl rv">Science citoyenne</div>
+      <h2 class="rv">Six astéroïdes <em>découverts</em> depuis Abidjan.</h2>
+      <p class="lead rv">En 2022, une équipe de bénévoles a détecté six astéroïdes inconnus dans des images du télescope Pan-STARRS. La campagne 2026/2027 s'est tenue du 7 septembre au 2 octobre : ses résultats préliminaires viennent de tomber, avec une nouvelle découverte préliminaire du club du Lycée français Blaise Pascal.</p>
+    </div>
+    <div class="track rv" aria-label="Astéroïdes en mouvement">
+      <svg class="rock" viewBox="0 0 40 40"><path d="M6 20 12 8l14-2 10 12-4 14-16 6z"/></svg><svg class="rock" viewBox="0 0 40 40"><path d="M6 20 12 8l14-2 10 12-4 14-16 6z"/></svg><svg class="rock" viewBox="0 0 40 40"><path d="M6 20 12 8l14-2 10 12-4 14-16 6z"/></svg><svg class="rock" viewBox="0 0 40 40"><path d="M6 20 12 8l14-2 10 12-4 14-16 6z"/></svg><svg class="rock" viewBox="0 0 40 40"><path d="M6 20 12 8l14-2 10 12-4 14-16 6z"/></svg><svg class="rock" viewBox="0 0 40 40"><path d="M6 20 12 8l14-2 10 12-4 14-16 6z"/></svg>
+      <div class="tgt"><div>6</div><small>OBJETS DÉTECTÉS</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- ÉVÉNEMENTS -->
+<section id="evenements" class="pad" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="lbl rv">Événements</div>
+    <h2 class="rv">Le radar est <em>en veille.</em></h2>
+    <div class="mission rv">
+      <div class="radar"><svg viewBox="0 0 190 190"><circle cx="95" cy="95" r="90" fill="none" stroke="var(--line)"/><circle cx="95" cy="95" r="60" fill="none" stroke="var(--line)"/><circle cx="95" cy="95" r="30" fill="none" stroke="var(--line)"/><path d="M95 5v180M5 95h180" stroke="var(--line)"/><g class="sweep"><path d="M95 95 L95 5 A90 90 0 0 1 158 31 Z" fill="var(--gold)" opacity=".25"/></g><circle cx="130" cy="60" r="3" fill="var(--gold)"/><circle cx="64" cy="120" r="2.5" fill="var(--gold)"/></svg></div>
+      <div><h3>Aucun événement programmé pour l'instant</h3><p>La prochaine observation publique ou AstroPause sera annoncée ici dès qu'elle est confirmée. Pour être prévenu en premier, écris-nous.</p><div style="margin-top:22px"><a class="btn solid" href="#rejoindre">Être prévenu</a></div></div>
+    </div>
+    <h3 class="rv" style="font-size:clamp(28px,4vw,48px);margin:100px 0 0">Missions <em>accomplies</em></h3>
+    <p class="drag-hint rv" style="margin-top:34px">Fais glisser pour parcourir →</p>
+    <div class="strip" id="strip">
+      <article class="ev"><div class="ph"><img src="images/orion.jpg" alt="" loading="lazy"></div><div class="tx"><time>7 SEPT. – 2 OCT. 2026</time><h3>Campagne d'astéroïdes 2026/2027</h3><p>Une nouvelle campagne de recherche avec des élèves et bénévoles. Résultats préliminaires publiés début octobre, dont une découverte préliminaire au Lycée français Blaise Pascal.</p><span class="pl">En ligne · Science citoyenne</span></div></article>
+      <article class="ev"><div class="ph"><div class="big">30<br>JUIN</div></div><div class="tx"><time>30 JUIN 2024</time><h3>Asteroid Day</h3><p>Conférences au LASMES à l'occasion de la journée mondiale des astéroïdes.</p><span class="pl">LASMES · Université Félix Houphouët-Boigny</span></div></article>
+      <article class="ev"><div class="ph"><img src="images/blaise-pascal.jpg" alt="" loading="lazy"></div><div class="tx"><time>FÉVRIER 2024</time><h3>Journées de l'espace · Lycée Blaise Pascal</h3><p>Initiation à l'astronomie et observation du ciel avec les télescopes de l'AIA, lors de l'inauguration du club d'astronomie du lycée.</p><span class="pl">Abidjan · Lycée français Blaise Pascal</span></div></article>
+      <article class="ev"><div class="ph"><img src="images/fb-1.jpg" alt="" loading="lazy"></div><div class="tx"><time>27 NOV. – 8 DÉC. 2023</time><h3>Astro Tour Ivoire</h3><p>Quatre villes, neuf dates : ateliers, formations d'enseignants, observations et conférences gratuits pour tous, avec SpaceBus France et l'IRD. Quinze scientifiques, dix Ivoiriens et cinq Français.</p><span class="pl">Abidjan · Yamoussoukro · Korhogo · Bouaké</span></div></article>
+      <article class="ev"><div class="ph"><img src="images/astropause-public.jpg" alt="" loading="lazy"></div><div class="tx"><time>18 MAI 2023</time><h3>AstroPause #1</h3><p>« Communication satellite, Terre et reconquête de l'espace » : présentation de l'AIA et conférences sur l'agence spatiale ivoirienne et les satellites. Une cinquantaine de participants.</p><span class="pl">LASMES · Université Félix Houphouët-Boigny</span></div></article>
+      <article class="ev"><div class="ph"><div class="big">PLANÈTE<br>B ?</div></div><div class="tx"><time>26 JANVIER 2023</time><h3>Café des Savoirs · « Il n'y a pas de planète B »</h3><p>Invitée de l'Institut Français de Côte d'Ivoire, l'AIA a animé un débat sur l'avenir de la Terre.</p><span class="pl">Institut Français de Côte d'Ivoire</span></div></article>
+      <article class="ev"><div class="ph"><img src="images/otma.jpg" alt="" loading="lazy"></div><div class="tx"><time>16 – 18 JUILLET 2021</time><h3>On The Moon Again</h3><p>Trois jours d'observation de la Lune à l'Université Félix Houphouët-Boigny, avec l'opération internationale On The Moon Again.</p><span class="pl">Abidjan · Université Félix Houphouët-Boigny</span></div></article>
+      <article class="ev"><div class="ph"><img src="images/ag-2021.jpg" alt="" loading="lazy"></div><div class="tx"><time>13 FÉVRIER 2021</time><h3>Naissance de l'AIA</h3><p>Assemblée générale constitutive à l'Université Félix Houphouët-Boigny : le Dr Aziz Diaby est élu premier président.</p><span class="pl">Abidjan-Cocody</span></div></article>
+    </div>
+    <p class="credit">Sources : <a href="https://www.facebook.com/Association.Ivoirienne.Astronomie/events" target="_blank" rel="noopener">page Facebook de l'AIA</a>, <a href="https://www.ird.fr/astrotour-lastronomie-pour-toutes-en-cote-divoire" target="_blank" rel="noopener">IRD</a>, <a href="https://lastronomieafrique.com/lastropause-de-lassociation-ivoirienne-dastronomie-aia-la-cote-divoire-et-le-defi-de-la-conquete-spatiale/" target="_blank" rel="noopener">L'Astronomie Afrique</a>, <a href="https://africapss.org/2021/03/15/aziz-diaby-le-chercheur-en-physique-spatiale-qui-veut-promouvoir-lastronomie-en-cote-divoire/" target="_blank" rel="noopener">AfricaPSS</a>.</p>
+  </div>
+</section>
+
+<!-- JOURNAL -->
+<section id="journal" class="pad">
+  <div class="wrap">
+    <div class="lbl rv">Journal de bord</div>
+    <h2 class="rv">Toutes les <em>transmissions.</em></h2>
+    <p class="lead rv">Les articles du site de l'AIA et ceux que la presse et les revues scientifiques ont consacrés à l'association, du plus récent au plus ancien.</p>
+    <div class="arts">
+
+      <details class="art rv"><summary><time>OCT. 2026</time><span class="src">AIA</span><h3>Campagne d'astéroïdes 2026/2027 : premiers résultats</h3></summary><div class="body">
+        <p>Du 7 septembre au 2 octobre 2026, la deuxième campagne de recherche d'astéroïdes de l'année scolaire 2026/2027 a mobilisé élèves et bénévoles, dans le cadre du Pan-African Citizen Science e-Laboratory. Ses résultats préliminaires viennent d'être publiés.</p>
+        <p>L'AIA a salué une découverte préliminaire d'astéroïde réalisée par le club d'astronomie du Lycée français Blaise Pascal d'Abidjan. Elle reste à confirmer, mais elle montre que la graine semée dans les clubs scolaires donne déjà des fruits.</p>
+        <a href="https://www.facebook.com/Association.Ivoirienne.Astronomie" target="_blank" rel="noopener">Lire sur la page Facebook de l'AIA ↗</a></div></details>
+
+      <details class="art rv"><summary><time>10 JUIN 2026</time><span class="src">AIA</span><h3>Six astéroïdes découverts depuis Abidjan : retour sur la campagne 2022</h3></summary><div class="body">
+        <p>En 2022, l'AIA a participé pour la première fois à l'International Astronomical Search Collaboration (IASC), un programme de science citoyenne mené avec l'Union Astronomique Internationale et la NASA.</p>
+        <p>Des bénévoles ont analysé des séries d'images du télescope Pan-STARRS, à Hawaï, à la recherche de points lumineux en mouvement. Le soir, après les cours et le travail, les membres ont repéré six astéroïdes inconnus.</p>
+        <ul><li>Les découvertes suivent maintenant la procédure de confirmation orbitale du Minor Planet Center.</li><li>Une fois confirmés, l'équipe pourra proposer un nom pour chaque astéroïde.</li><li>Les campagnes reviennent chaque année et sont ouvertes aux membres : il suffit d'un ordinateur et de rigueur, sans télescope personnel.</li></ul>
+        <a href="https://aia-ci.cloud/actualites/six-asteroides-decouverts-depuis-abidjan/" target="_blank" rel="noopener">Article d'origine ↗</a></div></details>
+
+      <details class="art rv"><summary><time>22 AVR. 2026</time><span class="src">AIA</span><h3>L'AIA en tournée : des clubs d'astronomie naissent dans les lycées</h3></summary><div class="body">
+        <p>L'AIA se déplace dans les établissements d'Abidjan et de l'intérieur du pays. Chaque visite suit le même rythme : une séance de planétarium mobile, un atelier pratique (dont des fusées à eau) et, si la météo le permet, une observation au télescope.</p>
+        <p>Le but est de laisser derrière soi un club d'astronomie durable, animé par les élèves eux-mêmes. L'association prête du matériel, fournit des supports de cours et revient régulièrement. L'objectif n'est pas de former des astronomes, mais de montrer que les carrières scientifiques sont à portée de main.</p>
+        <p>Les jeunes filles sont placées au premier rang, y compris aux commandes du télescope : les filières scientifiques ont besoin d'elles. Directions d'établissements, professeurs et parents intéressés peuvent contacter l'AIA pour préparer la prochaine année scolaire.</p>
+        <a href="https://aia-ci.cloud/actualites/clubs-astronomie-lycees/" target="_blank" rel="noopener">Article d'origine ↗</a></div></details>
+
+      <details class="art rv"><summary><time>AVR. 2026</time><span class="src">PRESSE</span><h3>AstroEdu 2025 : l'astronomie ivoirienne présentée à l'espace francophone</h3></summary><div class="body">
+        <p>Au troisième colloque « Astronomie pour l'éducation dans l'espace francophone », le Dr Marc Harris Yao Fortune, astrophysicien et enseignant-chercheur à l'UFHB, a présenté le développement de l'astronomie en Côte d'Ivoire.</p>
+        <p>Il a détaillé les activités de l'AIA : observations publiques, clubs scolaires, campagnes de recherche d'astéroïdes avec des élèves et conférences scientifiques, ainsi que les projets pour renforcer les infrastructures de recherche. La rencontre réunissait des acteurs de Guinée, de Mauritanie, du Bénin, de Tunisie, d'Algérie et d'ailleurs.</p>
+        <a href="https://lastronomieafrique.com/constellations-africaines-expertise-et-engagement-a-astroedu-2025/" target="_blank" rel="noopener">L'Astronomie Afrique ↗</a></div></details>
+
+      <details class="art rv"><summary><time>5 FÉV. 2026</time><span class="src">AIA</span><h3>Pourquoi la Côte d'Ivoire a besoin de son observatoire</h3></summary><div class="body">
+        <p>L'AIA présente son projet le plus ambitieux : un observatoire astronomique national, première étape d'une future agence spatiale ivoirienne.</p>
+        <p>L'Afrique de l'Ouest compte peu d'infrastructures d'astronomie. Pourtant, des observatoires modestes, bien placés et bien gérés produisent des données utiles : suivi d'astéroïdes, étude d'étoiles variables. Le site prévu serait permanent, équipé d'instruments de qualité et ouvert aux chercheurs, aux étudiants et au public.</p>
+        <p>L'article rappelle que plus d'une quinzaine de pays africains ont déjà une agence ou un programme spatial, avec des retombées concrètes : données satellitaires pour l'agriculture, formation d'ingénieurs. L'AIA appelle institutions, mécènes et diaspora scientifique à rejoindre le projet.</p>
+        <a href="https://aia-ci.cloud/actualites/observatoire-agence-spatiale-ivoirienne/" target="_blank" rel="noopener">Article d'origine ↗</a></div></details>
+
+      <details class="art rv"><summary><time>AVR. 2024</time><span class="src">PRESSE</span><h3>Les sciences spatiales en Côte d'Ivoire : ça bouge !</h3></summary><div class="body">
+        <p>Un tour d'horizon des sciences spatiales ivoiriennes. L'AIA y est présentée comme née au sein du Laboratoire de Physique de l'Atmosphère et de Mécanique des Fluides (LAPA-MF) de l'UFHB, avec des observations publiques régulières sur le campus de Cocody.</p>
+        <p>L'article raconte les journées de l'espace du Lycée français Blaise Pascal, où les télescopes de l'AIA ont servi à une séance d'observation du ciel, dans le cadre du programme « Une école, un télescope » de l'ASPP-BGS. Il cite aussi l'Astro Tour Ivoire parmi les actions récentes de l'association.</p>
+        <a href="https://lastronomieafrique.com/les-sciences-spatiales-en-cote-divoire-ca-bouge/" target="_blank" rel="noopener">L'Astronomie Afrique ↗</a></div></details>
+
+      <details class="art rv"><summary><time>19 FÉV. 2024</time><span class="src">PRESSE</span><h3>Des clubs d'astronomie pour sensibiliser les élèves au domaine spatial</h3></summary><div class="body">
+        <p>Le Lycée Blaise Pascal d'Abidjan a inauguré son club d'astronomie, grâce à un télescope offert par l'Association pour la Sauvegarde et la Promotion de la Pensée d'El-Hadj Boubacar Gamby-Sakho (ASPP-BGS). L'AIA a participé activement à la cérémonie.</p>
+        <p>Les élèves ont observé le ciel, guidés par leur professeur de physique-chimie. L'annonce a aussi été faite de la remise de télescopes et de la création de cinq clubs d'astronomie en mars, dont trois dans des lycées d'excellence et un à Abobo, dans le cadre du programme « Une école, un télescope ».</p>
+        <a href="https://www.koaci.com/article/2024/02/19/cote-divoire/societe/cote-divoire-sensibilisation-des-eleves-a-travers-le-domaine-spatial-par-la-mise-en-place-des-clubs-dastronomie-au-sein-de-la-communaute-educative_175870.html" target="_blank" rel="noopener">KOACI ↗</a></div></details>
+
+      <details class="art rv"><summary><time>JANV. 2024</time><span class="src">PRESSE</span><h3>Astro Tour, édition Ivoire : la Côte d'Ivoire dans les étoiles</h3></summary><div class="body">
+        <p>Bilan de la première édition de l'AstroTour en Côte d'Ivoire, porté par l'AIA, présidée par le Dr Aziz Diaby, et SpaceBus France, présidée par Raphaël Peralta. Du 27 novembre au 8 décembre 2023, ateliers, formations, observations du ciel et conférences gratuits ont touché élèves, étudiants, enseignants et grand public.</p>
+        <p>La tournée est passée par le groupe scolaire Le Miri, le lycée moderne de Bingerville, l'école internationale Jules Verne, le lycée international Jean-Mermoz, le lycée Félix Houphouët-Boigny de Korhogo et l'Université Félix Houphouët-Boigny. Le Dr Pancrace Aka a conçu une enquête sur les cosmogonies ivoiriennes, pour recenser les visions locales du ciel.</p>
+        <p>Le soir du 8 décembre, le Dr Aziz Diaby était l'invité de l'émission « Le Grand Talk » sur Life TV pour expliquer les enjeux de la tournée et le rôle des sciences spatiales dans le développement du pays. Les organisateurs jugent cette première édition enrichissante, reconnaissent les défis à relever et espèrent une seconde édition plus fructueuse.</p>
+        <a href="https://lastronomieafrique.com/astro-tour-edition-ivoire-la-cote-d-ivoire-dans-les-etoiles/" target="_blank" rel="noopener">L'Astronomie Afrique ↗</a></div></details>
+
+      <details class="art rv"><summary><time>27 NOV. 2023</time><span class="src">PRESSE</span><h3>AstroTour : l'astronomie pour tou·te·s en Côte d'Ivoire</h3></summary><div class="body">
+        <p>L'IRD annonce la tournée : quatre villes, neuf dates, et quatre volets (scolaire, formation des enseignants, grand public, recensement des cosmogonies). Une équipe de 15 scientifiques, dix Ivoiriens et cinq Français, venus de l'UFHB, du CNRS, du CEA et de l'IRD, parcourt le pays.</p>
+        <ul><li>Abidjan : 27, 28 et 29 novembre</li><li>Yamoussoukro : 1er et 2 décembre</li><li>Korhogo : 4 et 5 décembre</li><li>Bouaké : 7 et 8 décembre</li></ul>
+        <p>Les objectifs : initier à la démarche scientifique et à l'esprit critique, montrer la diversité des métiers du spatial, susciter des vocations et promouvoir la place des femmes dans les sciences.</p>
+        <a href="https://www.ird.fr/astrotour-lastronomie-pour-toutes-en-cote-divoire" target="_blank" rel="noopener">IRD ↗</a> · <a href="https://www.spacebusfrance.fr/astrotour-edition-ivoire" target="_blank" rel="noopener">SpaceBus France ↗</a></div></details>
+
+      <details class="art rv"><summary><time>JUIL. 2023</time><span class="src">PRESSE</span><h3>L'AstroPause de l'AIA : la Côte d'Ivoire et le défi de la conquête spatiale</h3></summary><div class="body">
+        <p>Compte rendu de la première AstroPause, le 18 mai 2023 au Laboratoire des Sciences de la Matière et de l'Énergie Solaire (LASMES) de l'UFHB, devant une cinquantaine de participants : universitaires, professionnels, étudiants et élèves.</p>
+        <ul><li>Le Dr Marc Harris Yao a présenté l'AIA.</li><li>Le Dr Pancrace Aka a donné une conférence sur l'agence spatiale ivoirienne : enjeux et défis.</li><li>Le Dr Jean-Baptiste Ackah a parlé de communication par satellite et de la reconquête de l'espace.</li></ul>
+        <p>Le contexte : quelques semaines plus tôt, lors de la conférence NewSpace Africa à Abidjan, le gouvernement avait annoncé la création d'une agence spatiale nationale et un premier nanosatellite, Yam-Sat CI 01.</p>
+        <a href="https://lastronomieafrique.com/lastropause-de-lassociation-ivoirienne-dastronomie-aia-la-cote-divoire-et-le-defi-de-la-conquete-spatiale/" target="_blank" rel="noopener">L'Astronomie Afrique ↗</a></div></details>
+
+      <details class="art rv"><summary><time>AVR. 2023</time><span class="src">PRESSE</span><h3>Café des Savoirs : « Il n'y a pas de planète B »</h3></summary><div class="body">
+        <p>Le 26 janvier 2023, l'AIA était l'invitée spéciale du Café des Savoirs de l'Institut Français de Côte d'Ivoire. Le Dr Aziz Diaby a présenté l'association, puis plusieurs voix se sont succédé.</p>
+        <ul><li>Dr Marc Harris Yao : l'histoire de l'Univers, et pourquoi la Terre reste la seule planète habitée connue.</li><li>Dr Pancrace Aka : les astéroïdes, entre curiosité scientifique et risque de collision.</li><li>Dr David Baratoux, conseiller scientifique de l'AIA : une planète habitable a besoin d'eau liquide, Mars a perdu l'essentiel de son atmosphère, il n'existe donc pas de solution de repli.</li><li>Ahoua Stéphane, secrétaire à l'organisation : une « promenade dans l'espace » avec le logiciel Stellarium.</li></ul>
+        <a href="https://lastronomieafrique.com/lessentiel-du-cafe-des-savoir-de-lassociation-ivoirienne-dastronomie-il-ny-a-pas-de-planete-b/" target="_blank" rel="noopener">L'Astronomie Afrique ↗</a></div></details>
+
+      <details class="art rv"><summary><time>15 MARS 2021</time><span class="src">PRESSE</span><h3>Aziz Diaby, le chercheur en physique spatiale qui veut promouvoir l'astronomie en Côte d'Ivoire</h3></summary><div class="body">
+        <p>Portrait du président fraîchement élu. Après le bac, il étudie au Sénégal (licence de physique-chimie, puis masters en physique pure et en physique nucléaire), revient en Côte d'Ivoire en 2012 et commence en 2015 un doctorat en physique spatiale, centré sur l'ionosphère. Il présente ses travaux en Italie, en Inde, aux États-Unis et à Chypre, et reçoit deux prix.</p>
+        <p>Il explique avoir créé l'AIA face au désintérêt des jeunes pour les études scientifiques, faute d'infrastructures, de débouchés et de cours pratiques. Au programme : tournées dans les écoles, observations publiques de la Lune et des planètes, formations, conférences, et à terme un observatoire. Les cotisations doivent financer le matériel.</p>
+        <a href="https://africapss.org/2021/03/15/aziz-diaby-le-chercheur-en-physique-spatiale-qui-veut-promouvoir-lastronomie-en-cote-divoire/" target="_blank" rel="noopener">AfricaPSS ↗</a> · <a href="https://bouake360.wordpress.com/2021/03/15/aziz-diaby-le-chercheur-en-physique-spatiale-qui-veut-promouvoir-lastronomie-en-cote-divoire/" target="_blank" rel="noopener">Bouaké 360 ↗</a></div></details>
+
+    </div>
+  </div>
+</section>
+
+<!-- OBSERVER -->
+<section id="observer" class="pad obs">
+  <div class="bgphoto" style="background-image:url(images/abidjan-nuit.jpg)"></div>
+  <div class="wrap">
+    <div class="lbl rv">Observer soi-même</div>
+    <h2 class="rv">Ce soir, <em>au-dessus de nous.</em></h2>
+    <p class="lead rv">À 5° de latitude nord, Abidjan voit presque tout le ciel : les étoiles du nord comme celles du sud. Pas besoin de télescope pour commencer.</p>
+    <div class="obs-g">
+      <div class="moonbox rv">
+        <svg class="moon" viewBox="0 0 200 200" aria-hidden="true"><defs><mask id="mk"><rect width="200" height="200" fill="#fff"/><circle id="shade" cx="60" cy="100" r="86" fill="#000"/></mask><clipPath id="mc"><circle cx="100" cy="100" r="88"/></clipPath></defs>
+          <g clip-path="url(#mc)"><image href="images/moon_1024.jpg" x="8" y="8" width="184" height="184" opacity=".14"/><g mask="url(#mk)"><image href="images/moon_1024.jpg" x="8" y="8" width="184" height="184"/></g></g><circle cx="100" cy="100" r="88" fill="none" stroke="var(--line)"/></svg>
+        <p style="margin-top:18px;color:var(--ink-dim);font-size:14px" id="moontxt"></p>
+      </div>
+      <div class="sky-grid rv">
+        <div class="sk"><small>HEURE LOCALE (GMT)</small><b id="hh">--:--</b><span>Abidjan, 5°21′ N · 4°01′ O</span></div>
+        <div class="sk"><small>PHASE DE LA LUNE</small><b id="mp">…</b><span id="mi"></span></div>
+        <div class="sk"><small>ÉCLAIRAGE LUNAIRE</small><b id="ml">…</b><span>de la face visible</span></div>
+        <div class="sk"><small>ISS · ORBITE</small><b>≈ 400 km</b><span>16 levers de Soleil par jour</span></div>
+      </div>
+    </div>
+    <div class="kit">
+      <div class="kt rv"><i>01</i><h4>Éloigne-toi des lampadaires</h4><p>La lumière artificielle efface les étoiles. Un coin sombre fait apparaître bien plus d'astres.</p></div>
+      <div class="kt rv"><i>02</i><h4>Laisse tes yeux s'habituer</h4><p>Il faut une vingtaine de minutes pour voir le ciel à son meilleur. Évite l'écran du téléphone, ou mets-le en lumière rouge.</p></div>
+      <div class="kt rv"><i>03</i><h4>Commence à l'œil nu</h4><p>La Lune, les planètes brillantes et les grandes constellations se voient sans aucun instrument.</p></div>
+      <div class="kt rv"><i>04</i><h4>Une appli gratuite</h4><p>Stellarium (gratuit, aussi en ligne) te montre quoi regarder, où et quand, selon ta position.</p></div>
+    </div>
+    <p class="credit">Photos : Abidjan de nuit, <a href="https://commons.wikimedia.org/wiki/File:Plateau_Abidjan_de_nuit.jpg" target="_blank" rel="noopener">Wikimedia Commons</a> · Nébuleuse d'Orion, NASA/ESA/Hubble · Voie lactée, NOIRLab/AURA · Terre et Lune : textures NASA via three.js.</p>
+  </div>
+</section>
+
+<!-- PARTENAIRES -->
+<section id="partenaires" class="pad" style="padding-bottom:0">
+  <div class="wrap">
+    <div class="lbl rv">Alliés</div>
+    <h2 class="rv">Un réseau qui <em>dépasse l'atmosphère.</em></h2>
+    <div class="parts rv">
+      <a class="partlogo" href="https://www.iau.org" target="_blank" rel="noopener" aria-label="Union Astronomique Internationale"><img src="images/iau.png" alt="Union Astronomique Internationale" loading="lazy"></a>
+      <a class="partlogo" href="https://science.nasa.gov/citizen-science/" target="_blank" rel="noopener" aria-label="NASA, science citoyenne"><img src="images/nasa.png" alt="NASA" loading="lazy"></a>
+      <a class="part" href="https://iasc.cosmosearch.org" target="_blank" rel="noopener">IASC</a><a class="part" href="https://www.africanastronomicalsociety.org" target="_blank" rel="noopener">African Astronomical Society</a><a class="part" href="https://www.univ-fhb.edu.ci" target="_blank" rel="noopener">Université Félix Houphouët-Boigny</a><a class="part" href="https://uranoscope.org" target="_blank" rel="noopener">Uranoscope de France</a><a class="part" href="https://www.spacebusfrance.fr/astrotour-edition-ivoire" target="_blank" rel="noopener">SpaceBus France</a><a class="part" href="https://www.ird.fr" target="_blank" rel="noopener">IRD</a><span class="part">ASPP-BGS</span><span class="part">Pan-African Citizen Science e-Laboratory</span>
+    </div>
+  </div>
+</section>
+
+<!-- REJOINDRE -->
+<section id="rejoindre" class="pad join">
+  <div class="bgphoto" style="background-image:url(images/milkyway-tololo.jpg);opacity:.55"></div>
+  <div class="wrap join-g">
+    <div>
+      <div class="lbl rv">Rejoindre l'aventure</div>
+      <h2 class="rv">Aucun prérequis. <em>Juste la curiosité.</em></h2>
+      <p class="lead rv">Élève, étudiant, enseignant ou simple curieux : viens observer, apprendre, photographier ou chasser des astéroïdes avec nous.</p>
+      <p class="lead rv" style="font-size:16px">Téléphone / WhatsApp : <a href="tel:+2250758002993" style="color:var(--gold)">+225 07 58 00 29 93</a><br><a href="https://www.facebook.com/Association.Ivoirienne.Astronomie" rel="noopener" target="_blank" style="color:var(--gold)">Facebook · Association Ivoirienne d'Astronomie</a></p>
+      <div class="rv" style="margin-top:36px">
+        <details><summary>Faut-il un télescope pour participer ?</summary><p>Non. Les observations publiques se font avec les télescopes de l'AIA, et on commence très bien à l'œil nu.</p></details>
+        <details><summary>À quoi servent les cotisations ?</summary><p>À acheter du matériel (télescopes, équipements d'observation) et à financer les activités, l'AIA manquant de financement public.</p></details>
+        <details><summary>Je suis enseignant, puis-je créer un club ?</summary><p>Oui. L'AIA accompagne les lycées dans la création de clubs d'astronomie. Écris-nous pour en parler.</p></details>
+        <details><summary>Où ont lieu les observations ?</summary><p>Régulièrement sur le campus de Cocody à Abidjan, et lors des tournées dans les lycées et les villes. Les dates sont annoncées sur la page Facebook.</p></details>
+      </div>
+    </div>
+    <form id="f" class="rv" novalidate>
+      <div class="row">
+        <div class="fld"><label for="n">Ton nom</label><input id="n" autocomplete="name" placeholder="Prénom et nom"><div class="err" id="en"></div></div>
+        <div class="fld"><label for="s">Je suis</label><select id="s"><option>Élève</option><option>Étudiant</option><option>Enseignant</option><option>Passionné</option></select></div>
+      </div>
+      <div class="fld"><label for="m">Ton message</label><textarea id="m" placeholder="Ce qui te passionne dans le ciel…"></textarea><div class="err" id="em"></div></div>
+      <button class="btn solid sm" type="submit"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 13.9c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.6-2.6-1.1-4.3-3.7-4.4-3.9-.1-.2-1-1.3-1-2.5s.6-1.8.9-2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.7 1.2 1.5 1.9 1 .9 1.9 1.2 2.2 1.3.3.1.4.1.6-.1l.8-1c.2-.2.4-.2.6-.1l1.8.9c.3.1.5.2.5.3.1.2.1.8-.1 1.4z"/></svg>Envoyer</button>
+      <p class="fb" id="fb">Le message s'ouvre dans WhatsApp, prêt à envoyer.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="fbig" aria-hidden="true">AIA</div>
+  <div class="wrap">
+    <div class="ftop">
+      <h2>Le ciel commence <em>ici.</em></h2>
+      <a class="btn solid" href="#rejoindre">Rejoindre l'AIA</a>
+    </div>
+    <div class="fgrid">
+      <div class="fbrand"><img src="images/logo-256.png" alt="Logo AIA" width="68" height="68" loading="lazy"><div><strong>AIA</strong><p>Association Ivoirienne d'Astronomie. Fondée en 2021 à l'Université Félix Houphouët-Boigny, Abidjan.</p></div></div>
+      <nav class="fcol" aria-label="Plan du site"><h4>Explorer</h4><ul>
+        <li><a href="#asso">L'association</a></li><li><a href="#equipe">L'équipe</a></li><li><a href="#activites">Les activités</a></li><li><a href="#evenements">Les événements</a></li><li><a href="#journal">Le journal</a></li><li><a href="#observer">Observer</a></li></ul></nav>
+      <div class="fcol"><h4>Suivre l'AIA</h4>
+        <div class="soc">
+          <a href="https://www.facebook.com/Association.Ivoirienne.Astronomie" target="_blank" rel="noopener" aria-label="Facebook de l'AIA" title="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8.2h2.8l.5-3.3h-3.3V8.4c0-.9.4-1.7 1.8-1.7h1.6V3.9s-1.3-.2-2.5-.2c-2.6 0-4.3 1.600-4.3 4.400v2.400H7.300v3.300h2.800V22h3.400z"/></svg></a>
+          <a href="https://www.facebook.com/Association.Ivoirienne.Astronomie/reels_tab" target="_blank" rel="noopener" aria-label="Vidéos Reels de l'AIA" title="Reels"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M3 9h18M8 3l3 6M14 3l3 6"/><path d="M10.500 13.500v4l3.500-2z" fill="currentColor"/></svg></a>
+          <a href="https://wa.me/2250758002993" target="_blank" rel="noopener" aria-label="Écrire à l'AIA sur WhatsApp" title="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.600 15.100L2 22l5-1.300A10 10 0 1 0 12 2zm5.200 13.900c-.2.600-1.200 1.200-1.700 1.200-.4.100-1 .1-1.600-.1-.4-.1-.9-.3-1.500-.6-2.600-1.100-4.300-3.700-4.400-3.900-.1-.2-1-1.300-1-2.500s.6-1.800.9-2c.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.5l.8 1.900c.1.200.1.400 0 .5l-.3.500-.4.400c-.1.200-.3.300-.1.600.2.300.7 1.200 1.500 1.900 1 .9 1.900 1.200 2.200 1.300.3.100.4.100.6-.1l.8-1c.2-.2.4-.2.6-.1l1.800.9c.3.100.5.200.5.300.1.200.1.800-.1 1.400z"/></svg></a>
+          <a href="tel:+2250758002993" aria-label="Appeler l'AIA" title="Téléphone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.500 1.500a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></a>
+        </div>
+        <ul><li><a href="tel:+2250758002993">+225 07 58 00 29 93</a></li><li><a href="https://www.facebook.com/Association.Ivoirienne.Astronomie" target="_blank" rel="noopener">3,7 K abonnés sur Facebook</a></li></ul></div>
+      <div class="fcol"><h4>Partenaires</h4><ul>
+        <li><a href="https://www.iau.org" target="_blank" rel="noopener">Union Astronomique Internationale</a></li>
+        <li><a href="https://science.nasa.gov/citizen-science/" target="_blank" rel="noopener">NASA · science citoyenne</a></li>
+        <li><a href="https://iasc.cosmosearch.org" target="_blank" rel="noopener">IASC</a></li>
+        <li><a href="https://www.africanastronomicalsociety.org" target="_blank" rel="noopener">African Astronomical Society</a></li>
+        <li><a href="https://www.univ-fhb.edu.ci" target="_blank" rel="noopener">Université Félix Houphouët-Boigny</a></li>
+        <li><a href="https://www.spacebusfrance.fr/astrotour-edition-ivoire" target="_blank" rel="noopener">SpaceBus France</a></li></ul></div>
+    </div>
+    <div class="fbar"><span>© 2026 Association Ivoirienne d'Astronomie · Abidjan, Côte d'Ivoire · Photos : AIA, NASA/ESA, NOIRLab, Wikimedia Commons. <a href="#observer">Crédits</a></span><button class="totop" type="button" id="totop">Haut de page ↑</button></div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(function(){
+var rm=matchMedia('(prefers-reduced-motion:reduce)').matches, hasG=!!(window.gsap&&window.ScrollTrigger);
+var D=document, $=function(s,c){return (c||D).querySelector(s)}, $$=function(s,c){return Array.prototype.slice.call((c||D).querySelectorAll(s))};
+
+/* ---------- starfield ---------- */
+var cv=$('#sky'),cx=cv.getContext('2d'),W,H,S=[],mx=0,sy=0,shoot=null,vis=true;
+function size(){var d=Math.min(devicePixelRatio||1,2);W=cv.width=innerWidth*d;H=cv.height=innerHeight*d;cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';S=[];var n=Math.round(innerWidth*innerHeight/5500);for(var i=0;i<n;i++){var l=Math.random();S.push({x:Math.random()*W,y:Math.random()*H,r:(.4+l*1.4)*d,l:l,p:Math.random()*6.28,s:.5+Math.random()*1.5})}}
+size();addEventListener('resize',size);
+addEventListener('mousemove',function(e){mx=e.clientX/innerWidth-.5});
+D.addEventListener('visibilitychange',function(){vis=!D.hidden});
+function draw(t){
+  if(vis){cx.clearRect(0,0,W,H);
+    for(var i=0;i<S.length;i++){var s=S[i],x=s.x-mx*60*s.l,y=((s.y-sy*(.05+s.l*.3))%H+H)%H,a=.35+.65*Math.abs(Math.sin(t/1000*s.s+s.p));cx.globalAlpha=a*(.4+s.l*.6);cx.fillStyle=s.l>.85?'#FFD084':'#EAF0FF';cx.beginPath();cx.arc(x,y,s.r,0,6.28);cx.fill()}
+    cx.globalAlpha=1;
+    if(!rm){if(!shoot&&Math.random()<.003)shoot={x:Math.random()*W*.8,y:Math.random()*H*.4,l:0};
+      if(shoot){shoot.x+=14;shoot.y+=6;shoot.l++;var g=cx.createLinearGradient(shoot.x,shoot.y,shoot.x-120,shoot.y-52);g.addColorStop(0,'rgba(255,208,132,.9)');g.addColorStop(1,'rgba(255,208,132,0)');cx.strokeStyle=g;cx.lineWidth=2;cx.beginPath();cx.moveTo(shoot.x,shoot.y);cx.lineTo(shoot.x-120,shoot.y-52);cx.stroke();if(shoot.l>60)shoot=null}}}
+  if(!rm)requestAnimationFrame(draw)
+}
+rm?draw(0):requestAnimationFrame(draw);
+
+/* ---------- cursor ---------- */
+var cur=$('#cur'),px=-100,py=-100,tx=-100,ty=-100,ang=0,tang=0,spd=0,started=false;
+if(!rm&&matchMedia('(hover:hover)').matches){
+  addEventListener('mousemove',function(e){tx=e.clientX;ty=e.clientY;if(!started){started=true;px=tx;py=ty;cur.style.opacity=1;D.documentElement.classList.add('has-cur')}});
+  D.addEventListener('mouseleave',function(){cur.style.opacity=0});D.addEventListener('mouseenter',function(){if(started)cur.style.opacity=1});
+  (function l(){var dx=tx-px,dy=ty-py;px+=dx*.22;py+=dy*.22;var v=Math.hypot(dx,dy);spd+=(v-spd)*.2;
+    if(v>2.2)tang=Math.atan2(dx,-dy)*180/Math.PI;
+    var d=((tang-ang+540)%360)-180;ang+=d*.18;
+    cur.style.transform='translate('+(px-21)+'px,'+(py-21)+'px)';
+    var rk=cur.firstElementChild;rk.style.transform='rotate('+ang+'deg)';rk.style.setProperty('--f',Math.min(1.7,.35+spd/7).toFixed(2));
+    requestAnimationFrame(l)})();
+  D.addEventListener('mouseover',function(e){cur.classList.toggle('big',!!e.target.closest('a,button,summary,.pcard,.kt,.part,.pn,.star,.totop,.ev,select,label'))});
+}
+
+/* ---------- nav / overlay ---------- */
+var hd=$('#hd'),ov=$('#ov'),lenis=null;
+$('#bg').onclick=function(){ov.classList.add('open')};
+$('#ovx').onclick=function(){ov.classList.remove('open')};
+function goTo(h){var t=$(h);if(!t)return;ov.classList.remove('open');if(lenis)lenis.scrollTo(t,{offset:-10,duration:1.8});else t.scrollIntoView({behavior:rm?'auto':'smooth'})}
+$$('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){var h=a.getAttribute('href');if(h.length>1){e.preventDefault();goTo(h)}})});
+$('#skip').addEventListener('click',function(){goTo('#hub')});
+$('#totop').addEventListener('click',function(){if(lenis)lenis.scrollTo(0,{duration:2.4});else scrollTo({top:0,behavior:rm?'auto':'smooth'})});
+
+/* ---------- moon, clock, form ---------- */
+(function(){var syn=29.530588853,ref=Date.UTC(2000,0,6,18,14),age=(((Date.now()-ref)/864e5)%syn+syn)%syn,ph=age/syn,il=(1-Math.cos(2*Math.PI*ph))/2,names=['Nouvelle Lune','Premier croissant','Premier quartier','Gibbeuse croissante','Pleine Lune','Gibbeuse décroissante','Dernier quartier','Dernier croissant'],nm=names[Math.round(ph*8)%8];
+$('#mp').textContent=nm;$('#ml').textContent=Math.round(il*100)+' %';$('#mi').textContent='Âge : '+age.toFixed(1).replace('.',',')+' jours';$('#moontxt').textContent='Aujourd\'hui : '+nm+' ('+Math.round(il*100)+' %)';
+$('#shade').setAttribute('cx',ph<.5?100-172*il:100+172*il)})();
+(function(){var f=function(){var d=new Date();$('#hh').textContent=String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0')};f();setInterval(f,20000)})();
+$('#f').addEventListener('submit',function(e){e.preventDefault();var n=$('#n'),m=$('#m'),s=$('#s'),ok=1;
+  $('#en').textContent=n.value.trim()?'':(ok=0,'Entre ton nom.');$('#em').textContent=m.value.trim()?'':(ok=0,'Écris-nous un petit message.');if(!ok)return;
+  var url='https://wa.me/2250758002993?text='+encodeURIComponent('Bonjour l\'AIA, je suis '+n.value.trim()+' ('+s.value+').\n'+m.value.trim());window.open(url,'_blank','noopener');
+  $('#fb').innerHTML='Si WhatsApp ne s\'ouvre pas : <a href="'+url+'" target="_blank" rel="noopener" style="color:var(--gold)">ouvrir WhatsApp</a>'});
+function count(b){if(b.done)return;b.done=1;var n=+b.dataset.n,plain=b.dataset.plain,plus=b.dataset.plus,fmt=function(v){return (plain?v:v.toLocaleString('fr-FR'))+(plus&&v===n?'+':'')};
+  if(!hasG||rm){b.textContent=fmt(n);return}var o={v:0};gsap.to(o,{v:n,duration:1.8,ease:'power3.out',onUpdate:function(){b.textContent=fmt(Math.round(o.v))}})}
+
+/* ---------- drag scroll (équipe + événements) ---------- */
+function dragScroll(el){var down=false,sx=0,sl=0,moved=0;
+  el.addEventListener('pointerdown',function(e){if(e.pointerType==='touch')return;down=true;moved=0;sx=e.clientX;sl=el.scrollLeft});
+  addEventListener('pointermove',function(e){if(!down)return;var dx=e.clientX-sx;if(Math.abs(dx)>4){moved=1;el.classList.add('drag')}el.scrollLeft=sl-dx});
+  addEventListener('pointerup',function(){down=false;setTimeout(function(){el.classList.remove('drag')},0)});
+  el.addEventListener('click',function(e){if(moved){e.preventDefault();e.stopPropagation();moved=0}},true)}
+dragScroll($('#hs'));dragScroll($('#strip'));
+
+/* ---------- accordion ---------- */
+var pns=$$('.pn');
+function openPn(p){pns.forEach(function(x){x.classList.toggle('open',x===p)})}
+pns.forEach(function(p){p.addEventListener('mouseenter',function(){if(matchMedia('(hover:hover)').matches)openPn(p)});p.addEventListener('click',function(){openPn(p)});p.addEventListener('focus',function(){openPn(p)})});
+
+/* ---------- constellation hub ---------- */
+var cp=$('#cpanel');
+$$('.star').forEach(function(s){var show=function(){cp.innerHTML='<b>'+$('span',s).textContent+'</b><span>'+s.dataset.d+'</span>'};s.addEventListener('mouseenter',show);s.addEventListener('focus',show)});
+
+/* ---------- no-motion fallback ---------- */
+if(!hasG||rm){D.documentElement.classList.add('nomotion');$$('[data-n]').forEach(count);
+  $$('.manif .gw').forEach(function(e){e.style.color='var(--gold)'});$('#cline').style.strokeDashoffset=0;$('#skip').style.display='none';
+  setTimeout(function(){$('#splash').classList.add('out')},rm?200:2000);
+  addEventListener('scroll',function(){hd.classList.toggle('sc',scrollY>30)},{passive:true});return}
+
+/* ---------- GSAP ---------- */
+D.documentElement.classList.add('anim');
+gsap.registerPlugin(ScrollTrigger);
+var coarse=matchMedia('(hover:none)').matches;
+if(window.Lenis&&!coarse){lenis=new Lenis({lerp:.09,smoothWheel:true});lenis.on('scroll',ScrollTrigger.update);gsap.ticker.add(function(t){lenis.raf(t*1000)});gsap.ticker.lagSmoothing(0)}
+addEventListener('scroll',function(){sy=scrollY},{passive:true});
+
+function intro(){$('#splash').classList.add('out');
+  gsap.to('#hcopy .mask>span',{y:0,duration:1.3,ease:'expo.out',stagger:.14,delay:.2});
+  gsap.to('#hcopy .rv',{opacity:1,y:0,duration:1.1,ease:'power3.out',stagger:.12,delay:.7})}
+setTimeout(intro,2000);
+
+/* HERO : télescope qui se décompose puis plongée dans la lentille */
+var T=window.S;
+var names=['Pare-buée','Objectif','Chercheur','Porte-oculaire','Oculaire','Tube optique','Monture','Trépied'];
+var tl=gsap.timeline({defaults:{ease:'none'},scrollTrigger:{trigger:'#stage',start:'top top',end:'+=280%',pin:true,scrub:.9,anticipatePin:1}});
+tl.to('#hcopy',{opacity:0,y:-70,duration:.5,ease:'power2.in'},0)
+  .to('#cue',{opacity:0,duration:.2},0)
+  .to('#hud',{opacity:1,duration:.3},.3)
+  .to(T,{e:1,o:1,duration:1.7,ease:'power2.inOut',onUpdate:function(){$('#hud').textContent='VUE ÉCLATÉE · '+Math.round(T.e*100)+' %'}},.25);
+names.forEach(function(n,i){var o={};o[i]=1;tl.to(T.l,Object.assign({duration:.35,ease:'power2.out'},o),1.0+i*.2)});
+tl.to({},{duration:.5});
+names.forEach(function(n,i){var o={};o[i]=0;tl.to(T.l,Object.assign({duration:.3},o),3.3)});
+tl.to('#hud',{opacity:0,duration:.3},3.3)
+  .to(T,{d:1,duration:1.1,ease:'power2.inOut'},3.4)
+  .to(T,{t:1,duration:1.5,ease:'power1.in'},4.5)
+  .to('#flash',{opacity:1,duration:.35,ease:'power2.in'},5.55)
+  .fromTo('#final',{opacity:0,y:50,scale:.92},{opacity:1,y:0,scale:1,duration:.6,ease:'power3.out'},5.75)
+  .to('#flash',{opacity:0,duration:.6},5.9)
+  .to({},{duration:.6});
+/* label caption on small screens */
+ScrollTrigger.create({trigger:'#stage',start:'top top',end:'+=280%',onUpdate:function(){var best=-1;for(var i=0;i<T.l.length;i++){if(T.l[i]>.5)best=i}if(best>=0&&innerWidth<=980)$('#hud').textContent=(best+1)+'/8 · '+names[best].toUpperCase()}});
+
+/* manifeste sans épinglage */
+(function split(el){Array.prototype.slice.call(el.childNodes).forEach(function(n){
+  if(n.nodeType===3){var f=D.createDocumentFragment();n.textContent.split(/(\s+)/).forEach(function(w){if(!w.trim()){if(w)f.appendChild(D.createTextNode(' '));return}var s=D.createElement('span');s.className='w';s.textContent=w;f.appendChild(s)});n.replaceWith(f)}
+  else if(n.nodeType===1){var g=n.classList.contains('gw');split(n);if(g){$$('.w',n).forEach(function(w){w.classList.add('g')})}}})})($('#manif'));
+gsap.to('.manif .w',{opacity:1,ease:'none',stagger:.08,scrollTrigger:{trigger:'#asso',start:'top 72%',end:'bottom 60%',scrub:.6}});
+
+/* constellation : tracé des lignes */
+gsap.to('#cline',{strokeDashoffset:0,ease:'none',scrollTrigger:{trigger:'#const',start:'top 80%',end:'center 50%',scrub:.8}});
+gsap.from('.star',{scale:0,opacity:0,duration:.8,ease:'back.out(2)',stagger:.12,scrollTrigger:{trigger:'#const',start:'top 75%',once:true}});
+
+/* général */
+gsap.to('#mq1',{xPercent:-35,ease:'none',scrollTrigger:{trigger:'.mq',start:'top bottom',end:'bottom top',scrub:.6}});
+ScrollTrigger.batch('.rv',{start:'top 90%',once:true,onEnter:function(els){gsap.to(els,{opacity:1,y:0,duration:1,ease:'power3.out',stagger:.1,overwrite:true})}});
+$$('.ms').forEach(function(m){ScrollTrigger.create({trigger:m,start:'top 85%',once:true,onEnter:function(){m.classList.add('on')}})});
+$$('.stat b').forEach(function(b){ScrollTrigger.create({trigger:b,start:'top 90%',once:true,onEnter:function(){count(b)}})});
+$$('.imgw img,.pph img').forEach(function(im){gsap.fromTo(im,{yPercent:-5},{yPercent:5,ease:'none',scrollTrigger:{trigger:im.parentNode,start:'top bottom',end:'bottom top',scrub:true}})});
+/* progression, altitude, header, lien actif */
+var alt=$('#alt'),dot=$('#dot'),prog=$('#prog'),ids=['asso','equipe','activites','evenements','observer'],ls=$$('.links a:not(.btn)');
+ScrollTrigger.create({start:0,end:'max',onUpdate:function(s){var p=s.progress;prog.style.transform='scaleX('+p+')';dot.style.top='calc('+(p*100)+'% - 3px)';var km=400*Math.pow(1-p,2.2);alt.textContent=km>=1?Math.round(km)+' km':Math.max(18,Math.round(km*1000))+' m';hd.classList.toggle('sc',scrollY>30)}});
+ids.forEach(function(id,i){ScrollTrigger.create({trigger:'#'+id,start:'top 55%',end:'bottom 45%',onToggle:function(s){if(s.isActive){ls.forEach(function(a,j){a.classList.toggle('act',i===j)})}}})});
+addEventListener('load',function(){ScrollTrigger.refresh()});
+})();
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+const $=s=>document.querySelector(s),lerp=(a,b,k)=>a+(b-a)*k,clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const S=window.S;
+
+/* ============ TÉLESCOPE 3D ============ */
+function initScope(){
+  const stage=$('#stage'),canvas=$('#scope');
+  const R=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  R.setPixelRatio(Math.min(devicePixelRatio,2));
+  R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.0;R.outputColorSpace=THREE.SRGBColorSpace;
+  const sc=new THREE.Scene();
+  const pm=new THREE.PMREMGenerator(R);sc.environment=pm.fromScene(new RoomEnvironment(),.04).texture;
+  const cam=new THREE.PerspectiveCamera(28,1,.05,120);
+  const key=new THREE.DirectionalLight(0xfff1dc,2.1);key.position.set(5,6,8);
+  const rim=new THREE.DirectionalLight(0xF5A623,3.2);rim.position.set(-6,2,-7);
+  const fill=new THREE.DirectionalLight(0x6f8cff,1.3);fill.position.set(-7,-2,6);
+  sc.add(key,rim,fill);
+
+  const M={
+    white:new THREE.MeshStandardMaterial({color:0xf2f4fb,metalness:.2,roughness:.26}),
+    satin:new THREE.MeshStandardMaterial({color:0xc9d0e4,metalness:.7,roughness:.32}),
+    black:new THREE.MeshStandardMaterial({color:0x0b0d13,metalness:.15,roughness:.75}),
+    blackIn:new THREE.MeshStandardMaterial({color:0x050608,metalness:0,roughness:.95,side:THREE.BackSide}),
+    gold:new THREE.MeshStandardMaterial({color:0xF5A623,metalness:1,roughness:.26}),
+    steel:new THREE.MeshStandardMaterial({color:0x9ea8bf,metalness:1,roughness:.28}),
+    glass:new THREE.MeshPhysicalMaterial({color:0xffffff,metalness:0,roughness:0,transmission:1,thickness:.4,ior:1.5,transparent:true}),
+    coat:new THREE.MeshPhysicalMaterial({color:0x7a5cff,metalness:0,roughness:.08,iridescence:1,iridescenceIOR:1.9,iridescenceThicknessRange:[200,600],transparent:true,opacity:.28,side:THREE.DoubleSide})
+  };
+  const mesh=(g,m)=>new THREE.Mesh(g,m);
+  const cyl=(rt,rb,h,m,open,seg)=>{const g=new THREE.CylinderGeometry(rt,rb,h,seg||64,1,!!open);g.rotateX(Math.PI/2);return mesh(g,m)};
+  const cylX=(r,h,m)=>{const g=new THREE.CylinderGeometry(r,r,h,40);g.rotateZ(Math.PI/2);return mesh(g,m)};
+  const ring=(ro,ri,h,m)=>{const p=[[ri,-h/2],[ro,-h/2],[ro,h/2],[ri,h/2],[ri,-h/2]].map(a=>new THREE.Vector2(a[0],a[1]));const g=new THREE.LatheGeometry(p,64);g.rotateX(Math.PI/2);return mesh(g,m)};
+  const at=(o,x,y,z)=>{o.position.set(x,y,z);return o};
+  const scope=new THREE.Group();sc.add(scope);
+  const parts={};
+  function part(name,base,dir,dist,spin){const g=new THREE.Group();g.position.set(base[0],base[1],base[2]);scope.add(g);return parts[name]={g,base:new THREE.Vector3(...base),dir:new THREE.Vector3(...dir),dist,spin:spin||[0,0,0]}}
+
+  /* pare-buée */
+  let p=part('dew',[0,0,2.55],[0,0,1],3.6,[0,0,.5]);
+  const dewO=cyl(.62,.62,.9,M.white,true);dewO.material=M.white.clone();dewO.material.side=THREE.DoubleSide;p.g.add(dewO);
+  p.g.add(cyl(.6,.6,.9,M.blackIn,true));
+  const rimT=mesh(new THREE.TorusGeometry(.62,.02,20,72),M.gold);rimT.position.z=.45;p.g.add(rimT);
+  /* objectif */
+  p=part('obj',[0,0,1.95],[0,0,1],2.0,[0,0,.9]);
+  p.g.add(ring(.62,.5,.2,M.satin));
+  const lens=mesh(new THREE.SphereGeometry(.52,64,40),M.glass);lens.scale.set(1,1,.26);p.g.add(lens);
+  const coat=mesh(new THREE.CircleGeometry(.5,64),M.coat);coat.position.z=.14;p.g.add(coat);
+  p.g.add(at(ring(.6,.49,.04,M.gold),0,0,.1));
+  /* tube */
+  p=part('tube',[0,0,.2],[0,0,0],0);
+  p.g.add(cyl(.55,.55,3.6,M.white));
+  p.g.add(cyl(.535,.535,3.6,M.blackIn,true));
+  [1.2,-.9].forEach(z=>p.g.add(at(cyl(.562,.562,.1,M.black),0,0,z)));
+  p.g.add(at(cyl(.568,.568,.04,M.gold),0,0,.3));
+  [1.4,.7,0,-.7,-1.4].forEach(z=>p.g.add(at(ring(.536,.38,.03,M.black),0,0,z)));
+  p.g.add(at(mesh(new THREE.BoxGeometry(.16,.05,2.4),M.steel),0,-.58,0));
+  /* chercheur */
+  p=part('finder',[0,.95,.6],[0,1,0],1.7,[.08,0,0]);
+  p.g.add(cyl(.11,.11,1.1,M.white));p.g.add(at(cyl(.14,.14,.12,M.black),0,0,.52));
+  p.g.add(at(mesh(new THREE.CircleGeometry(.1,32),M.glass),0,0,.585));
+  p.g.add(at(cyl(.06,.06,.3,M.black),0,0,-.66));
+  [.25,-.25].forEach(z=>{p.g.add(at(ring(.16,.11,.07,M.steel),0,0,z));p.g.add(at(mesh(new THREE.BoxGeometry(.05,.56,.06),M.steel),0,-.36,z))});
+  /* porte-oculaire */
+  p=part('focus',[0,0,-1.75],[0,0,-1],1.8,[0,0,-.4]);
+  p.g.add(cyl(.3,.3,.5,M.satin));p.g.add(at(cyl(.32,.32,.05,M.gold),0,0,.2));
+  [-1,1].forEach(s=>{p.g.add(at(cylX(.17,.1,M.steel),s*.4,-.04,0));p.g.add(at(cylX(.1,.16,M.gold),s*.36,-.04,0))});
+  /* oculaire */
+  p=part('eye',[0,0,-2.4],[0,0,-1],3.8,[0,0,1.2]);
+  p.g.add(cyl(.14,.14,.9,M.black));p.g.add(at(cyl(.18,.18,.32,M.black),0,0,-.12));p.g.add(at(cyl(.185,.185,.04,M.gold),0,0,-.02));
+  const eyeL=mesh(new THREE.SphereGeometry(.12,32,24),M.glass);eyeL.scale.set(1,1,.35);eyeL.position.z=-.46;p.g.add(eyeL);
+  /* monture équatoriale */
+  p=part('mount',[0,-1.15,0],[0,-1,0],1.2,[0,.15,0]);
+  p.g.add(at(mesh(new THREE.BoxGeometry(.46,.12,1.5),M.satin),0,.62,0));
+  p.g.add(at(mesh(new THREE.BoxGeometry(.5,.5,.9),M.satin),0,.12,0));
+  const polar=cyl(.2,.2,1.6,M.steel);polar.position.set(0,-.38,0);polar.rotation.x=THREE.MathUtils.degToRad(-5.36);p.g.add(polar);
+  p.g.add(at(cyl(.215,.215,.05,M.gold),0,-.38,.55));
+  p.g.add(at(cylX(.17,1.0,M.satin),0,.3,0));
+  p.g.add(at(cylX(.055,1.05,M.steel),.98,.3,0));
+  [.9,1.28].forEach(x=>{p.g.add(at(cylX(.3,.22,M.black),x,.3,0));p.g.add(at(cylX(.305,.04,M.gold),x+.08,.3,0))});
+  /* trépied */
+  p=part('tri',[0,-2.15,0],[0,-1,0],2.0,[0,.2,0]);
+  const hubG=new THREE.CylinderGeometry(.38,.46,.22,48);p.g.add(mesh(hubG,M.satin));
+  [Math.PI,Math.PI+2.094,Math.PI-2.094].forEach((az,k)=>{
+    const leg=new THREE.Group();const lm=mesh(new THREE.CylinderGeometry(.075,.06,1.95,20),M.steel);lm.position.y=-.975;leg.add(lm);
+    const foot=mesh(new THREE.SphereGeometry(.11,16,12),M.black);foot.position.y=-1.97;leg.add(foot);
+    leg.rotation.order='YXZ';leg.rotation.y=az+Math.PI;leg.rotation.x=.3;leg.position.set(Math.sin(az)*.32,-.05,Math.cos(az)*.32);p.g.add(leg)});
+
+  /* flare */
+  const fc=document.createElement('canvas');fc.width=fc.height=256;const fx=fc.getContext('2d');const gr=fx.createRadialGradient(128,128,0,128,128,128);gr.addColorStop(0,'rgba(255,244,214,1)');gr.addColorStop(.22,'rgba(245,166,35,.55)');gr.addColorStop(1,'rgba(245,166,35,0)');fx.fillStyle=gr;fx.fillRect(0,0,256,256);
+  const flare=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(fc),blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,opacity:0}));sc.add(flare);
+
+  /* étiquettes */
+  const defs=[['dew',[0,.62,0],'top'],['obj',[0,.52,0],'top'],['finder',[0,.14,.2],'top'],['focus',[0,.3,0],'top'],['eye',[0,.18,0],'top'],['tube',[0,-.56,1.6],'bot'],['mount',[0,-.55,-.7],'bot'],['tri',[0,-1.2,-.8],'side']];
+  const tags=defs.map((d,i)=>({el:$('.tg[data-i="'+i+'"]'),part:parts[d[0]],anchor:new THREE.Vector3(...d[1]),kind:d[2]}));
+  tags.forEach(t=>{t.el.style.opacity=0;t.h=t.el.offsetHeight||70;});
+
+  let w=1,h=1;
+  function fit(){w=stage.clientWidth;h=stage.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();tags.forEach(t=>t.h=t.el.offsetHeight||70)}
+  fit();addEventListener('resize',fit);
+  let vis=true,mx=0,my=0;
+  new IntersectionObserver(es=>vis=es[0].isIntersecting).observe(stage);
+  addEventListener('mousemove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5});
+  const v=new THREE.Vector3(),tg=new THREE.Vector3(),wp=new THREE.Vector3();
+  const ease=x=>x*x*(3-2*x);
+  function frame(time){
+    requestAnimationFrame(frame);if(!vis)return;
+    const e=S.e,o=ease(S.o),d=ease(S.d),t=S.t,wide=w>980;
+    for(const k in parts){const q=parts[k];q.g.position.copy(q.base).addScaledVector(q.dir,q.dist*e);q.g.rotation.set(q.spin[0]*e,q.spin[1]*e,q.spin[2]*e)}
+    const idle=rm?0:Math.sin(time*.0004)*.04;
+    let a=lerp(.78+idle+mx*.12,Math.PI/2,o);a=lerp(a,0,d);
+    const asp=w/h,fitD=(sw,sh)=>Math.max(sw/(.4986*asp),sh/.4986),port=!wide&&asp<1,land=!wide&&asp>=1.3;
+    const Da=wide?(w<1300?18.5:15.5):fitD(9.6,6.8),Dp=wide?22:(port?fitD(10,14.8):fitD(14,10.5));
+    const ty0=lerp(-.2,port?-1.55:-.95,o),hh=lerp(lerp(2.3,.5,o)+my*-.5,.05,d),D=lerp(lerp(Da,Dp,o),9,d);
+    if(t>0){cam.position.set(0,.04,lerp(9,-9,t));tg.set(0,.04,cam.position.z-6)}
+    else{tg.set(0,lerp(ty0,.04,d),0);cam.position.set(Math.sin(a)*D,tg.y+hh,Math.cos(a)*D)}
+    const q=port?o*(1-d):0;cam.up.set(0,1-q,q).normalize();cam.lookAt(tg);
+    const sx=wide?lerp((w<1300?.34:.27)*w,0,Math.max(o,d)):(land?lerp(.24*w,0,Math.max(o,d)):0),sy=(wide||land)?0:lerp(-(h<620?.33:.25)*h,0,o);
+    cam.setViewOffset(w,h,-sx,-sy,w,h);
+    /* flare suit l'objectif */
+    parts.obj.g.getWorldPosition(wp);flare.position.copy(wp).add(new THREE.Vector3(0,0,.35));
+    const dz=Math.abs(cam.position.z-wp.z),near=t>0?clamp(1-dz/2.6,0,1):0;
+    flare.scale.setScalar(lerp(1.2,3.2,near));flare.material.opacity=near*.5+(1-o)*.22;
+    R.render(sc,cam);
+    /* étiquettes */
+    tags.forEach((T,i)=>{const al=S.l[i];if(al<.01||!wide){T.el.style.opacity=0;return}
+      v.copy(T.anchor);T.part.g.localToWorld(v);v.project(cam);
+      const x=(v.x*.5+.5)*w,y=(-v.y*.5+.5)*h,el=T.el,ln=el.querySelector('.ln'),dt=el.querySelector('.dt'),cxp=clamp(x,100,w-100);
+      const half=el.offsetWidth/2||88,dl=(x-cxp)+half;el.style.opacity=al;
+      if(T.kind==='top'){const top=Math.max(92,h*.13);el.style.left=cxp+'px';el.style.top=top+'px';ln.style.left=dl+'px';ln.style.top=T.h+'px';ln.style.height=Math.max(0,y-top-T.h)+'px';dt.style.left=dl+'px';dt.style.top=(y-top-4)+'px'}
+      else if(T.kind==='bot'){const top=h*.8;el.style.left=cxp+'px';el.style.top=top+'px';ln.style.left=dl+'px';ln.style.top='auto';ln.style.bottom='100%';ln.style.height=Math.max(0,top-y)+'px';dt.style.left=dl+'px';dt.style.top=(y-top-4)+'px'}
+      else{el.style.left=(x+120)+'px';el.style.top=(y-T.h/2)+'px';ln.style.display='none';dt.style.top=(T.h/2-4)+'px';dt.style.left=(half-120)+'px'}
+    });
+  }
+  requestAnimationFrame(frame);
+}
+try{initScope()}catch(err){console.warn('WebGL indisponible pour le télescope',err)}
+
+/* ============ GLOBE ============ */
+function initGlobe(){
+  const box=$('#globe'),canvas=$('#globec'),tag=$('#etag');if(!box)return;
+  const R=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.outputColorSpace=THREE.SRGBColorSpace;
+  const sc=new THREE.Scene(),cam=new THREE.PerspectiveCamera(30,1,.1,100);cam.position.z=7.4;
+  const L=new THREE.TextureLoader(),T=n=>{const t=L.load('images/'+n);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t};
+  const earth=new THREE.Mesh(new THREE.SphereGeometry(1.5,96,96),new THREE.MeshPhongMaterial({map:T('earth_atmos_2048.jpg'),specularMap:L.load('images/earth_specular_2048.jpg'),specular:new THREE.Color(0x335577),shininess:18,emissiveMap:T('earth_lights_2048.png'),emissive:new THREE.Color(0xffd9a0),emissiveIntensity:1.1}));
+  const clouds=new THREE.Mesh(new THREE.SphereGeometry(1.515,64,64),new THREE.MeshLambertMaterial({map:T('earth_clouds_1024.png'),transparent:true,opacity:.55,depthWrite:false}));
+  const atm=new THREE.Mesh(new THREE.SphereGeometry(1.72,64,64),new THREE.ShaderMaterial({transparent:true,side:THREE.BackSide,blending:THREE.AdditiveBlending,depthWrite:false,
+    vertexShader:'varying vec3 n;void main(){n=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+    fragmentShader:'varying vec3 n;void main(){float i=pow(.62-dot(n,vec3(0.,0.,1.)),3.);gl_FragColor=vec4(.35,.6,1.,1.)*i*1.6;}'}));
+  const g=new THREE.Group();g.add(earth,clouds);sc.add(g,atm);
+  const lat=5.36,lon=-4.03,ph=(90-lat)*Math.PI/180,th=(lon+180)*Math.PI/180,r=1.5;
+  const mp=new THREE.Vector3(-r*Math.sin(ph)*Math.cos(th),r*Math.cos(ph),r*Math.sin(ph)*Math.sin(th));
+  const mk=new THREE.Mesh(new THREE.SphereGeometry(.035,16,16),new THREE.MeshBasicMaterial({color:0xF5A623}));mk.position.copy(mp);earth.add(mk);
+  const ring=new THREE.Mesh(new THREE.RingGeometry(.05,.062,40),new THREE.MeshBasicMaterial({color:0xF5A623,transparent:true,side:THREE.DoubleSide}));ring.position.copy(mp.clone().multiplyScalar(1.004));ring.lookAt(mp.clone().multiplyScalar(2));earth.add(ring);
+  const base=Math.atan2(-mp.x,mp.z);let ry=base-1.6,rx=.22,vx=0,vy=0,drag=false,px=0,py=0,idle=0;
+  sc.add(new THREE.AmbientLight(0x6677aa,.4));const sun=new THREE.DirectionalLight(0xfff2dd,2.4);sun.position.set(-4,2.5,4);sc.add(sun);
+  let w=1;function fit(){w=box.clientWidth;R.setSize(w,w,false)}fit();addEventListener('resize',fit);
+  box.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;box.setPointerCapture(e.pointerId)});
+  box.addEventListener('pointermove',e=>{if(!drag)return;vx=(e.clientX-px)*.008;vy=(e.clientY-py)*.005;ry+=vx;rx=clamp(rx+vy,-.9,.9);px=e.clientX;py=e.clientY;idle=0});
+  const up=()=>drag=false;box.addEventListener('pointerup',up);box.addEventListener('pointercancel',up);
+  let vis=false;new IntersectionObserver(es=>vis=es[0].isIntersecting).observe(box);
+  const v=new THREE.Vector3();let t=0;
+  (function loop(){requestAnimationFrame(loop);if(!vis)return;t+=.016;
+    if(!drag){idle+=.016;ry+=vx;vx*=.94;if(idle>2){const target=base-.15+(rm?0:Math.sin(t*.3)*.5);ry+=(target-ry)*.02}rx+=(.22-rx)*.01}
+    g.rotation.y=ry;g.rotation.x=rx;clouds.rotation.y+=rm?0:.0006;
+    const s=1+((t*1.1)%1)*1.8;ring.scale.setScalar(s);ring.material.opacity=1-((t*1.1)%1);
+    R.render(sc,cam);v.copy(mp);earth.localToWorld(v);const facing=v.z>.25;v.project(cam);
+    tag.style.opacity=facing?1:0;tag.style.left=((v.x*.5+.5)*100)+'%';tag.style.top=((-v.y*.5+.5)*100)+'%'})();
+}
+try{initGlobe()}catch(err){console.warn('WebGL indisponible pour le globe',err)}
+</script>
+</body>
+</html>
