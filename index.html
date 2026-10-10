@@ -1090,7 +1090,7 @@ tl.to('#hud',{opacity:0,duration:.3},3.3)
   .to('#flash',{opacity:0,duration:.6},5.9)
   .to({},{duration:.6});
 /* label caption on small screens */
-ScrollTrigger.create({trigger:'#stage',start:'top top',end:'+=280%',onUpdate:function(){var best=-1;for(var i=0;i<T.l.length;i++){if(T.l[i]>.5)best=i}if(best>=0&&innerWidth<=980)$('#hud').textContent=(best+1)+'/8 · '+names[best].toUpperCase()}});
+ScrollTrigger.create({trigger:'#stage',start:'top top',end:'+=280%',onUpdate:function(){var best=-1;for(var i=0;i<T.l.length;i++){if(T.l[i]>.5)best=i}if(best>=0&&innerWidth<1150)$('#hud').textContent=(best+1)+'/8 · '+names[best].toUpperCase()}});
 
 /* manifeste sans épinglage */
 (function split(el){Array.prototype.slice.call(el.childNodes).forEach(function(n){
@@ -1243,7 +1243,7 @@ function initScope(){
     flare.scale.setScalar(lerp(1.2,3.2,near));flare.material.opacity=near*.5+(1-o)*.22;
     R.render(sc,cam);
     /* étiquettes */
-    tags.forEach((T,i)=>{const al=S.l[i];if(al<.01||!wide){T.el.style.opacity=0;return}
+    tags.forEach((T,i)=>{const al=S.l[i];if(al<.01||w<1150){T.el.style.opacity=0;return}
       v.copy(T.anchor);T.part.g.localToWorld(v);v.project(cam);
       const x=(v.x*.5+.5)*w,y=(-v.y*.5+.5)*h,el=T.el,ln=el.querySelector('.ln'),dt=el.querySelector('.dt'),cxp=clamp(x,100,w-100);
       const half=el.offsetWidth/2||88,dl=(x-cxp)+half;el.style.opacity=al;
