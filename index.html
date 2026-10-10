@@ -486,9 +486,12 @@ html,body{max-width:100%;overflow-x:hidden}
   .goal{padding:26px;gap:18px}
   /* activités : accordéon vertical */
   .acc{flex-direction:column;height:auto;gap:8px}
-  .pn{flex:none;height:76px;transition:height .7s var(--ease),border-color .4s}
-  .pn.open{height:460px}
-  .pn:not(.open) h3{writing-mode:horizontal-tb;transform:none;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pn,.pn.open{flex:none}
+  .pn{height:84px;transition:height .7s var(--ease),border-color .4s;-webkit-tap-highlight-color:transparent}
+  .pn.open{height:470px}
+  .pn:not(.open)::before{content:'+';position:absolute;z-index:3;right:18px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:1px solid rgba(234,240,255,.45);border-radius:50%;display:grid;place-items:center;font:400 22px/1 var(--font-d);color:var(--gold);background:rgba(11,16,38,.55)}
+  .pn:not(.open) .in h3{flex:1;min-width:0;padding-right:56px}
+  .pn:not(.open) h3{writing-mode:horizontal-tb;transform:none;font-size:18px;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.15}
   .pn .in{padding:18px 20px}
   .pn:not(.open) .in{flex-direction:row;align-items:center;gap:14px;bottom:0;top:0}
   .pn .n{font-size:28px}
@@ -523,7 +526,7 @@ html,body{max-width:100%;overflow-x:hidden}
   .sky-grid{grid-template-columns:1fr}
   .const{grid-template-columns:1fr}
   .cta .btn{font-size:12px;padding:0 8px}
-  .pn.open{height:500px}
+  .pn.open{height:540px}
 }
 @media (max-width:360px){
   .hero-copy .lead{font-size:14px;line-height:1.5}
@@ -1037,7 +1040,14 @@ dragScroll($('#hs'));dragScroll($('#strip'));
 /* ---------- accordion ---------- */
 var pns=$$('.pn');
 function openPn(p){pns.forEach(function(x){x.classList.toggle('open',x===p)})}
-pns.forEach(function(p){p.addEventListener('mouseenter',function(){if(matchMedia('(hover:hover)').matches)openPn(p)});p.addEventListener('click',function(){openPn(p)});p.addEventListener('focus',function(){openPn(p)})});
+function syncPn(){pns.forEach(function(x){x.setAttribute('aria-expanded',x.classList.contains('open'))})}
+pns.forEach(function(p){p.setAttribute('role','button');
+  p.addEventListener('mouseenter',function(){if(matchMedia('(hover:hover) and (min-width:761px)').matches){openPn(p);syncPn()}});
+  p.addEventListener('click',function(){var was=p.classList.contains('open');openPn(p);syncPn();
+    if(innerWidth<=760&&!was){setTimeout(function(){var r=p.getBoundingClientRect();if(r.top<80||r.bottom>innerHeight)window.scrollBy({top:r.top-90,behavior:'smooth'})},380)}});
+  p.addEventListener('focus',function(){openPn(p);syncPn()});
+  p.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openPn(p);syncPn()}})});
+syncPn();
 
 /* ---------- constellation hub ---------- */
 var cp=$('#cpanel');
