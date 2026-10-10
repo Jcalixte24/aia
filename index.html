@@ -274,7 +274,7 @@ body::after{content:"";position:fixed;inset:-50%;z-index:150;pointer-events:none
 .bgphoto::after{content:"";position:absolute;inset:0;background:linear-gradient(var(--night),rgba(11,16,38,.4) 30%,rgba(11,16,38,.4) 70%,var(--night))}
 .obs-g{display:grid;grid-template-columns:.8fr 1.2fr;gap:60px;align-items:center;margin-top:50px}
 .moonbox{border:1px solid var(--line);border-radius:var(--r);padding:30px;background:rgba(11,16,38,.6);backdrop-filter:blur(8px);text-align:center}
-.moon{width:min(300px,80%);margin:auto;aspect-ratio:1}
+.moon{display:block;width:min(300px,80%);height:auto;margin:auto;aspect-ratio:1;filter:drop-shadow(0 0 28px rgba(190,205,255,.18))}
 .sky-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
 .sk{border:1px solid var(--line);border-radius:var(--r);padding:22px;background:rgba(11,16,38,.6);backdrop-filter:blur(8px)}
 .sk small{font:700 10px var(--font-d);letter-spacing:.22em;color:var(--ink-dim);display:block;margin-bottom:10px}
@@ -857,8 +857,7 @@ html,body{max-width:100%;overflow-x:hidden}
     <p class="lead rv">À 5° de latitude nord, Abidjan voit presque tout le ciel : les étoiles du nord comme celles du sud. Pas besoin de télescope pour commencer.</p>
     <div class="obs-g">
       <div class="moonbox rv">
-        <svg class="moon" viewBox="0 0 200 200" aria-hidden="true"><defs><mask id="mk"><rect width="200" height="200" fill="#fff"/><circle id="shade" cx="60" cy="100" r="86" fill="#000"/></mask><clipPath id="mc"><circle cx="100" cy="100" r="88"/></clipPath></defs>
-          <g clip-path="url(#mc)"><image href="images/moon_1024.jpg" x="8" y="8" width="184" height="184" opacity=".14"/><g mask="url(#mk)"><image href="images/moon_1024.jpg" x="8" y="8" width="184" height="184"/></g></g><circle cx="100" cy="100" r="88" fill="none" stroke="var(--line)"/></svg>
+        <canvas class="moon" id="moonc" width="440" height="440" role="img" aria-label="La Lune telle qu'elle est visible aujourd'hui depuis Abidjan"></canvas>
         <p style="margin-top:18px;color:var(--ink-dim);font-size:14px" id="moontxt"></p>
       </div>
       <div class="sky-grid rv">
@@ -999,9 +998,26 @@ $('#skip').addEventListener('click',function(){goTo('#hub')});
 $('#totop').addEventListener('click',function(){if(lenis)lenis.scrollTo(0,{duration:2.4});else scrollTo({top:0,behavior:rm?'auto':'smooth'})});
 
 /* ---------- moon, clock, form ---------- */
-(function(){var syn=29.530588853,ref=Date.UTC(2000,0,6,18,14),age=(((Date.now()-ref)/864e5)%syn+syn)%syn,ph=age/syn,il=(1-Math.cos(2*Math.PI*ph))/2,names=['Nouvelle Lune','Premier croissant','Premier quartier','Gibbeuse croissante','Pleine Lune','Gibbeuse décroissante','Dernier quartier','Dernier croissant'],nm=names[Math.round(ph*8)%8];
-$('#mp').textContent=nm;$('#ml').textContent=Math.round(il*100)+' %';$('#mi').textContent='Âge : '+age.toFixed(1).replace('.',',')+' jours';$('#moontxt').textContent='Aujourd\'hui : '+nm+' ('+Math.round(il*100)+' %)';
-$('#shade').setAttribute('cx',ph<.5?100-172*il:100+172*il)})();
+(function(){
+  var syn=29.530588853,ref=Date.UTC(2000,0,6,18,14),names=['Nouvelle Lune','Premier croissant','Premier quartier','Gibbeuse croissante','Pleine Lune','Gibbeuse décroissante','Dernier quartier','Dernier croissant'];
+  var img=new Image(),tex=null;
+  function phase(){var age=(((Date.now()-ref)/864e5)%syn+syn)%syn,ph=age/syn;return {age:age,ph:ph,il:(1-Math.cos(2*Math.PI*ph))/2}}
+  function texts(m){var nm=names[Math.round(m.ph*8)%8];
+    $('#mp').textContent=nm;$('#ml').textContent=Math.round(m.il*100)+' %';$('#mi').textContent='Âge : '+m.age.toFixed(1).replace('.',',')+' jours';
+    $('#moontxt').textContent="Aujourd'hui : "+nm+' ('+Math.round(m.il*100)+' %)'}
+  function paint(m){var c=$('#moonc'),g=c.getContext('2d'),N=c.width,R=N/2-3,out=g.createImageData(N,N),d=out.data,a=2*Math.PI*m.ph,Lx=Math.sin(a),Lz=-Math.cos(a);
+    for(var y=0;y<N;y++)for(var x=0;x<N;x++){var nx=(x+.5-N/2)/R,ny=(y+.5-N/2)/R,r2=nx*nx+ny*ny;if(r2>1.01)continue;
+      var nz=Math.sqrt(Math.max(0,1-r2)),al=Math.min(1,Math.max(0,(1-Math.sqrt(r2))*R+.5)),v,i=(y*N+x)*4;
+      if(tex){var lat=Math.asin(-Math.max(-1,Math.min(1,ny))),lon=Math.atan2(nx,nz),u=Math.min(tex.w-1,Math.max(0,Math.floor((lon/Math.PI+1)/2*tex.w))),vv=Math.min(tex.h-1,Math.max(0,Math.floor((.5-lat/Math.PI)*tex.h)));v=Math.min(255,tex.d[(vv*tex.w+u)*4]*1.3)}
+      else{v=170-60*r2}
+      var lit=nx*Lx+nz*Lz,l=Math.min(1,Math.max(0,(lit+.08)*1.9));l=l*l*(3-2*l);
+      var k=.045+.955*l;d[i]=Math.min(255,v*k*1.02+4);d[i+1]=Math.min(255,v*k+6);d[i+2]=Math.min(255,v*k*.97+14);d[i+3]=255*al}
+    g.putImageData(out,0,0)}
+  function refresh(){var m=phase();texts(m);paint(m)}
+  img.onload=function(){try{var o=document.createElement('canvas');o.width=img.width;o.height=img.height;var og=o.getContext('2d');og.drawImage(img,0,0);tex={w:o.width,h:o.height,d:og.getImageData(0,0,o.width,o.height).data}}catch(e){tex=null}refresh()};
+  img.onerror=refresh;img.src='images/moon_1024.jpg';
+  window.refreshMoon=refresh;refresh();setInterval(refresh,10*60*1000);
+})();
 (function(){var f=function(){var d=new Date();$('#hh').textContent=String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0')};f();setInterval(f,20000)})();
 $('#f').addEventListener('submit',function(e){e.preventDefault();var n=$('#n'),m=$('#m'),s=$('#s'),ok=1;
   $('#en').textContent=n.value.trim()?'':(ok=0,'Entre ton nom.');$('#em').textContent=m.value.trim()?'':(ok=0,'Écris-nous un petit message.');if(!ok)return;
