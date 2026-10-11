@@ -1,0 +1,305 @@
+{
+ "events": [
+  {
+   "title": "Campagne d'astéroïdes 2026/2027",
+   "dateLabel": "7 sept. – 2 oct. 2026",
+   "start": "2026-09-07",
+   "end": "2026-10-02",
+   "place": "En ligne · Science citoyenne",
+   "description": "Une nouvelle campagne de recherche avec des élèves et bénévoles. Résultats préliminaires publiés début octobre, dont une découverte préliminaire au Lycée français Blaise Pascal.",
+   "image": "images/orion.jpg",
+   "bigText": ""
+  },
+  {
+   "title": "Asteroid Day",
+   "dateLabel": "30 juin 2024",
+   "start": "2024-06-30",
+   "end": "2024-06-30",
+   "place": "LASMES · Université Félix Houphouët-Boigny",
+   "description": "Conférences au LASMES à l'occasion de la journée mondiale des astéroïdes.",
+   "image": "",
+   "bigText": "30 JUIN"
+  },
+  {
+   "title": "Journées de l'espace · Lycée Blaise Pascal",
+   "dateLabel": "Février 2024",
+   "start": "2024-02-13",
+   "end": "2024-02-13",
+   "place": "Abidjan · Lycée français Blaise Pascal",
+   "description": "Initiation à l'astronomie et observation du ciel avec les télescopes de l'AIA, lors de l'inauguration du club d'astronomie du lycée.",
+   "image": "images/blaise-pascal.jpg",
+   "bigText": ""
+  },
+  {
+   "title": "Astro Tour Ivoire",
+   "dateLabel": "27 nov. – 8 déc. 2023",
+   "start": "2023-11-27",
+   "end": "2023-12-08",
+   "place": "Abidjan · Yamoussoukro · Korhogo · Bouaké",
+   "description": "Quatre villes, neuf dates : ateliers, formations d'enseignants, observations et conférences gratuits pour tous, avec SpaceBus France et l'IRD. Quinze scientifiques, dix Ivoiriens et cinq Français.",
+   "image": "images/fb-1.jpg",
+   "bigText": ""
+  },
+  {
+   "title": "AstroPause #1",
+   "dateLabel": "18 mai 2023",
+   "start": "2023-05-18",
+   "end": "2023-05-18",
+   "place": "LASMES · Université Félix Houphouët-Boigny",
+   "description": "« Communication satellite, Terre et reconquête de l'espace » : présentation de l'AIA et conférences sur l'agence spatiale ivoirienne et les satellites. Une cinquantaine de participants.",
+   "image": "images/astropause-public.jpg",
+   "bigText": ""
+  },
+  {
+   "title": "Café des Savoirs · « Il n'y a pas de planète B »",
+   "dateLabel": "26 janvier 2023",
+   "start": "2023-01-26",
+   "end": "2023-01-26",
+   "place": "Institut Français de Côte d'Ivoire",
+   "description": "Invitée de l'Institut Français de Côte d'Ivoire, l'AIA a animé un débat sur l'avenir de la Terre.",
+   "image": "",
+   "bigText": "PLANÈTE B ?"
+  },
+  {
+   "title": "On The Moon Again",
+   "dateLabel": "16 – 18 juillet 2021",
+   "start": "2021-07-16",
+   "end": "2021-07-18",
+   "place": "Abidjan · Université Félix Houphouët-Boigny",
+   "description": "Trois jours d'observation de la Lune à l'Université Félix Houphouët-Boigny, avec l'opération internationale On The Moon Again.",
+   "image": "images/otma.jpg",
+   "bigText": ""
+  },
+  {
+   "title": "Naissance de l'AIA",
+   "dateLabel": "13 février 2021",
+   "start": "2021-02-13",
+   "end": "2021-02-13",
+   "place": "Abidjan-Cocody",
+   "description": "Assemblée générale constitutive à l'Université Félix Houphouët-Boigny : le Dr Aziz Diaby est élu premier président.",
+   "image": "images/ag-2021.jpg",
+   "bigText": ""
+  }
+ ],
+ "articles": [
+  {
+   "title": "Campagne d'astéroïdes 2026/2027 : premiers résultats",
+   "dateLabel": "Oct. 2026",
+   "date": "2026-10-01",
+   "source": "AIA",
+   "body": "Du 7 septembre au 2 octobre 2026, la deuxième campagne de recherche d'astéroïdes de l'année scolaire 2026/2027 a mobilisé élèves et bénévoles, dans le cadre du Pan-African Citizen Science e-Laboratory. Ses résultats préliminaires viennent d'être publiés.\n\nL'AIA a salué une découverte préliminaire d'astéroïde réalisée par le club d'astronomie du Lycée français Blaise Pascal d'Abidjan. Elle reste à confirmer, mais elle montre que la graine semée dans les clubs scolaires donne déjà des fruits.",
+   "links": [
+    {
+     "label": "Lire sur la page Facebook de l'AIA",
+     "url": "https://www.facebook.com/Association.Ivoirienne.Astronomie"
+    }
+   ]
+  },
+  {
+   "title": "Six astéroïdes découverts depuis Abidjan : retour sur la campagne 2022",
+   "dateLabel": "10 juin 2026",
+   "date": "2026-06-10",
+   "source": "AIA",
+   "body": "En 2022, l'AIA a participé pour la première fois à l'International Astronomical Search Collaboration (IASC), un programme de science citoyenne mené avec l'Union Astronomique Internationale et la NASA.\n\nDes bénévoles ont analysé des séries d'images du télescope Pan-STARRS, à Hawaï, à la recherche de points lumineux en mouvement. Le soir, après les cours et le travail, les membres ont repéré six astéroïdes inconnus.\n\n- Les découvertes suivent maintenant la procédure de confirmation orbitale du Minor Planet Center.\n- Une fois confirmés, l'équipe pourra proposer un nom pour chaque astéroïde.\n- Les campagnes reviennent chaque année et sont ouvertes aux membres : il suffit d'un ordinateur et de rigueur, sans télescope personnel.",
+   "links": [
+    {
+     "label": "Article d'origine",
+     "url": "https://aia-ci.cloud/actualites/six-asteroides-decouverts-depuis-abidjan/"
+    }
+   ]
+  },
+  {
+   "title": "L'AIA en tournée : des clubs d'astronomie naissent dans les lycées",
+   "dateLabel": "22 avr. 2026",
+   "date": "2026-04-22",
+   "source": "AIA",
+   "body": "L'AIA se déplace dans les établissements d'Abidjan et de l'intérieur du pays. Chaque visite suit le même rythme : une séance de planétarium mobile, un atelier pratique (dont des fusées à eau) et, si la météo le permet, une observation au télescope.\n\nLe but est de laisser derrière soi un club d'astronomie durable, animé par les élèves eux-mêmes. L'association prête du matériel, fournit des supports de cours et revient régulièrement. L'objectif n'est pas de former des astronomes, mais de montrer que les carrières scientifiques sont à portée de main.\n\nLes jeunes filles sont placées au premier rang, y compris aux commandes du télescope : les filières scientifiques ont besoin d'elles. Directions d'établissements, professeurs et parents intéressés peuvent contacter l'AIA pour préparer la prochaine année scolaire.",
+   "links": [
+    {
+     "label": "Article d'origine",
+     "url": "https://aia-ci.cloud/actualites/clubs-astronomie-lycees/"
+    }
+   ]
+  },
+  {
+   "title": "AstroEdu 2025 : l'astronomie ivoirienne présentée à l'espace francophone",
+   "dateLabel": "Avr. 2026",
+   "date": "2026-04-15",
+   "source": "PRESSE",
+   "body": "Au troisième colloque « Astronomie pour l'éducation dans l'espace francophone », le Dr Marc Harris Yao Fortune, astrophysicien et enseignant-chercheur à l'UFHB, a présenté le développement de l'astronomie en Côte d'Ivoire.\n\nIl a détaillé les activités de l'AIA : observations publiques, clubs scolaires, campagnes de recherche d'astéroïdes avec des élèves et conférences scientifiques, ainsi que les projets pour renforcer les infrastructures de recherche. La rencontre réunissait des acteurs de Guinée, de Mauritanie, du Bénin, de Tunisie, d'Algérie et d'ailleurs.",
+   "links": [
+    {
+     "label": "L'Astronomie Afrique",
+     "url": "https://lastronomieafrique.com/constellations-africaines-expertise-et-engagement-a-astroedu-2025/"
+    }
+   ]
+  },
+  {
+   "title": "Pourquoi la Côte d'Ivoire a besoin de son observatoire",
+   "dateLabel": "5 fév. 2026",
+   "date": "2026-02-05",
+   "source": "AIA",
+   "body": "L'AIA présente son projet le plus ambitieux : un observatoire astronomique national, première étape d'une future agence spatiale ivoirienne.\n\nL'Afrique de l'Ouest compte peu d'infrastructures d'astronomie. Pourtant, des observatoires modestes, bien placés et bien gérés produisent des données utiles : suivi d'astéroïdes, étude d'étoiles variables. Le site prévu serait permanent, équipé d'instruments de qualité et ouvert aux chercheurs, aux étudiants et au public.\n\nL'article rappelle que plus d'une quinzaine de pays africains ont déjà une agence ou un programme spatial, avec des retombées concrètes : données satellitaires pour l'agriculture, formation d'ingénieurs. L'AIA appelle institutions, mécènes et diaspora scientifique à rejoindre le projet.",
+   "links": [
+    {
+     "label": "Article d'origine",
+     "url": "https://aia-ci.cloud/actualites/observatoire-agence-spatiale-ivoirienne/"
+    }
+   ]
+  },
+  {
+   "title": "Les sciences spatiales en Côte d'Ivoire : ça bouge !",
+   "dateLabel": "Avr. 2024",
+   "date": "2024-04-15",
+   "source": "PRESSE",
+   "body": "Un tour d'horizon des sciences spatiales ivoiriennes. L'AIA y est présentée comme née au sein du Laboratoire de Physique de l'Atmosphère et de Mécanique des Fluides (LAPA-MF) de l'UFHB, avec des observations publiques régulières sur le campus de Cocody.\n\nL'article raconte les journées de l'espace du Lycée français Blaise Pascal, où les télescopes de l'AIA ont servi à une séance d'observation du ciel, dans le cadre du programme « Une école, un télescope » de l'ASPP-BGS. Il cite aussi l'Astro Tour Ivoire parmi les actions récentes de l'association.",
+   "links": [
+    {
+     "label": "L'Astronomie Afrique",
+     "url": "https://lastronomieafrique.com/les-sciences-spatiales-en-cote-divoire-ca-bouge/"
+    }
+   ]
+  },
+  {
+   "title": "Des clubs d'astronomie pour sensibiliser les élèves au domaine spatial",
+   "dateLabel": "19 fév. 2024",
+   "date": "2024-02-19",
+   "source": "PRESSE",
+   "body": "Le Lycée Blaise Pascal d'Abidjan a inauguré son club d'astronomie, grâce à un télescope offert par l'Association pour la Sauvegarde et la Promotion de la Pensée d'El-Hadj Boubacar Gamby-Sakho (ASPP-BGS). L'AIA a participé activement à la cérémonie.\n\nLes élèves ont observé le ciel, guidés par leur professeur de physique-chimie. L'annonce a aussi été faite de la remise de télescopes et de la création de cinq clubs d'astronomie en mars, dont trois dans des lycées d'excellence et un à Abobo, dans le cadre du programme « Une école, un télescope ».",
+   "links": [
+    {
+     "label": "KOACI",
+     "url": "https://www.koaci.com/article/2024/02/19/cote-divoire/societe/cote-divoire-sensibilisation-des-eleves-a-travers-le-domaine-spatial-par-la-mise-en-place-des-clubs-dastronomie-au-sein-de-la-communaute-educative_175870.html"
+    }
+   ]
+  },
+  {
+   "title": "Astro Tour, édition Ivoire : la Côte d'Ivoire dans les étoiles",
+   "dateLabel": "Janv. 2024",
+   "date": "2024-01-15",
+   "source": "PRESSE",
+   "body": "Bilan de la première édition de l'AstroTour en Côte d'Ivoire, porté par l'AIA, présidée par le Dr Aziz Diaby, et SpaceBus France, présidée par Raphaël Peralta. Du 27 novembre au 8 décembre 2023, ateliers, formations, observations du ciel et conférences gratuits ont touché élèves, étudiants, enseignants et grand public.\n\nLa tournée est passée par le groupe scolaire Le Miri, le lycée moderne de Bingerville, l'école internationale Jules Verne, le lycée international Jean-Mermoz, le lycée Félix Houphouët-Boigny de Korhogo et l'Université Félix Houphouët-Boigny. Le Dr Pancrace Aka a conçu une enquête sur les cosmogonies ivoiriennes, pour recenser les visions locales du ciel.\n\nLe soir du 8 décembre, le Dr Aziz Diaby était l'invité de l'émission « Le Grand Talk » sur Life TV pour expliquer les enjeux de la tournée et le rôle des sciences spatiales dans le développement du pays. Les organisateurs jugent cette première édition enrichissante, reconnaissent les défis à relever et espèrent une seconde édition plus fructueuse.",
+   "links": [
+    {
+     "label": "L'Astronomie Afrique",
+     "url": "https://lastronomieafrique.com/astro-tour-edition-ivoire-la-cote-d-ivoire-dans-les-etoiles/"
+    }
+   ]
+  },
+  {
+   "title": "AstroTour : l'astronomie pour tou·te·s en Côte d'Ivoire",
+   "dateLabel": "27 nov. 2023",
+   "date": "2023-11-27",
+   "source": "PRESSE",
+   "body": "L'IRD annonce la tournée : quatre villes, neuf dates, et quatre volets (scolaire, formation des enseignants, grand public, recensement des cosmogonies). Une équipe de 15 scientifiques, dix Ivoiriens et cinq Français, venus de l'UFHB, du CNRS, du CEA et de l'IRD, parcourt le pays.\n\n- Abidjan : 27, 28 et 29 novembre\n- Yamoussoukro : 1er et 2 décembre\n- Korhogo : 4 et 5 décembre\n- Bouaké : 7 et 8 décembre\n\nLes objectifs : initier à la démarche scientifique et à l'esprit critique, montrer la diversité des métiers du spatial, susciter des vocations et promouvoir la place des femmes dans les sciences.",
+   "links": [
+    {
+     "label": "IRD",
+     "url": "https://www.ird.fr/astrotour-lastronomie-pour-toutes-en-cote-divoire"
+    },
+    {
+     "label": "SpaceBus France",
+     "url": "https://www.spacebusfrance.fr/astrotour-edition-ivoire"
+    }
+   ]
+  },
+  {
+   "title": "L'AstroPause de l'AIA : la Côte d'Ivoire et le défi de la conquête spatiale",
+   "dateLabel": "Juil. 2023",
+   "date": "2023-07-15",
+   "source": "PRESSE",
+   "body": "Compte rendu de la première AstroPause, le 18 mai 2023 au Laboratoire des Sciences de la Matière et de l'Énergie Solaire (LASMES) de l'UFHB, devant une cinquantaine de participants : universitaires, professionnels, étudiants et élèves.\n\n- Le Dr Marc Harris Yao a présenté l'AIA.\n- Le Dr Pancrace Aka a donné une conférence sur l'agence spatiale ivoirienne : enjeux et défis.\n- Le Dr Jean-Baptiste Ackah a parlé de communication par satellite et de la reconquête de l'espace.\n\nLe contexte : quelques semaines plus tôt, lors de la conférence NewSpace Africa à Abidjan, le gouvernement avait annoncé la création d'une agence spatiale nationale et un premier nanosatellite, Yam-Sat CI 01.",
+   "links": [
+    {
+     "label": "L'Astronomie Afrique",
+     "url": "https://lastronomieafrique.com/lastropause-de-lassociation-ivoirienne-dastronomie-aia-la-cote-divoire-et-le-defi-de-la-conquete-spatiale/"
+    }
+   ]
+  },
+  {
+   "title": "Café des Savoirs : « Il n'y a pas de planète B »",
+   "dateLabel": "Avr. 2023",
+   "date": "2023-04-10",
+   "source": "PRESSE",
+   "body": "Le 26 janvier 2023, l'AIA était l'invitée spéciale du Café des Savoirs de l'Institut Français de Côte d'Ivoire. Le Dr Aziz Diaby a présenté l'association, puis plusieurs voix se sont succédé.\n\n- Dr Marc Harris Yao : l'histoire de l'Univers, et pourquoi la Terre reste la seule planète habitée connue.\n- Dr Pancrace Aka : les astéroïdes, entre curiosité scientifique et risque de collision.\n- Dr David Baratoux, conseiller scientifique de l'AIA : une planète habitable a besoin d'eau liquide, Mars a perdu l'essentiel de son atmosphère, il n'existe donc pas de solution de repli.\n- Ahoua Stéphane, secrétaire à l'organisation : une « promenade dans l'espace » avec le logiciel Stellarium.",
+   "links": [
+    {
+     "label": "L'Astronomie Afrique",
+     "url": "https://lastronomieafrique.com/lessentiel-du-cafe-des-savoir-de-lassociation-ivoirienne-dastronomie-il-ny-a-pas-de-planete-b/"
+    }
+   ]
+  },
+  {
+   "title": "Aziz Diaby, le chercheur en physique spatiale qui veut promouvoir l'astronomie en Côte d'Ivoire",
+   "dateLabel": "15 mars 2021",
+   "date": "2021-03-15",
+   "source": "PRESSE",
+   "body": "Portrait du président fraîchement élu. Après le bac, il étudie au Sénégal (licence de physique-chimie, puis masters en physique pure et en physique nucléaire), revient en Côte d'Ivoire en 2012 et commence en 2015 un doctorat en physique spatiale, centré sur l'ionosphère. Il présente ses travaux en Italie, en Inde, aux États-Unis et à Chypre, et reçoit deux prix.\n\nIl explique avoir créé l'AIA face au désintérêt des jeunes pour les études scientifiques, faute d'infrastructures, de débouchés et de cours pratiques. Au programme : tournées dans les écoles, observations publiques de la Lune et des planètes, formations, conférences, et à terme un observatoire. Les cotisations doivent financer le matériel.",
+   "links": [
+    {
+     "label": "AfricaPSS",
+     "url": "https://africapss.org/2021/03/15/aziz-diaby-le-chercheur-en-physique-spatiale-qui-veut-promouvoir-lastronomie-en-cote-divoire/"
+    },
+    {
+     "label": "Bouaké 360",
+     "url": "https://bouake360.wordpress.com/2021/03/15/aziz-diaby-le-chercheur-en-physique-spatiale-qui-veut-promouvoir-lastronomie-en-cote-divoire/"
+    }
+   ]
+  }
+ ],
+ "team": [
+  {
+   "name": "Dr Aziz Diaby",
+   "role": "Fondateur · Président",
+   "bio": "Chercheur en physique spatiale, spécialiste de l'ionosphère, et enseignant de physique-chimie. Il a présenté ses travaux en Italie, en Inde, aux États-Unis et à Chypre. Élu président de l'AIA pour six ans en 2021.",
+   "photo": "images/p-diaby.jpg",
+   "badge": "FONDATEUR"
+  },
+  {
+   "name": "Dr Marc Harris Yao",
+   "role": "Premier vice-président",
+   "bio": "Astrophysicien, enseignant-chercheur à l'Université Félix Houphouët-Boigny. Il présente l'AIA et porte le développement de l'astronomie ivoirienne : observations publiques, clubs dans les lycées, campagnes d'astéroïdes.",
+   "photo": "",
+   "badge": ""
+  },
+  {
+   "name": "Dr Pancrace Aka",
+   "role": "Secrétaire général adjoint",
+   "bio": "Épistémologue, historien des sciences et logicien, maître-assistant au département de philosophie de l'UFHB. Il a donné la conférence « Agence spatiale ivoirienne : enjeux et défis ».",
+   "photo": "",
+   "badge": ""
+  },
+  {
+   "name": "Dr Jean-Baptiste Ackah",
+   "role": "Secrétaire à la communication",
+   "bio": "Docteur en physique de l'atmosphère et de l'espace (UFHB), ingénieur en météorologie aéronautique à l'ASECNA, membre du programme URSI Young Scientist. Conférence : « Communication satellite, Terre et reconquête de l'espace ».",
+   "photo": "",
+   "badge": ""
+  },
+  {
+   "name": "Dr David Baratoux",
+   "role": "Conseiller scientifique",
+   "bio": "Planétologue, directeur de recherche à l'IRD. Partenaire de longue date de l'AIA, il a co-organisé l'AstroTour Ivoire et est intervenu au Café des Savoirs.",
+   "photo": "",
+   "badge": ""
+  },
+  {
+   "name": "Ahoua Stéphane",
+   "role": "Secrétaire à l'organisation",
+   "bio": "Doctorant en physique de l'atmosphère. Il fait voyager le public dans l'espace avec le logiciel de planétarium Stellarium.",
+   "photo": "",
+   "badge": ""
+  }
+ ],
+ "settings": {
+  "phone": "+225 07 58 00 29 93",
+  "whatsapp": "2250758002993",
+  "facebook": "https://www.facebook.com/Association.Ivoirienne.Astronomie",
+  "facebookReels": "https://www.facebook.com/Association.Ivoirienne.Astronomie/reels_tab",
+  "followers": "3,7 K",
+  "email": "",
+  "networks": [],
+  "banner": "",
+  "heroLead": "Depuis 2021, nous emmenons la Côte d'Ivoire lever les yeux : télescopes ouverts à tous, clubs dans les lycées, conférences et chasse aux astéroïdes depuis Abidjan."
+ }
+}

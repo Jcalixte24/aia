@@ -390,6 +390,21 @@ footer{position:relative;border-top:1px solid var(--line);padding:90px 0 0;backg
 @media (max-width:980px){.traj{grid-template-columns:1fr 1fr;gap:34px 20px}.traj::before{display:none}.roles{grid-template-columns:1fr 1fr}.art summary{grid-template-columns:1fr 30px;gap:8px 12px}.art summary time{grid-column:1}.art summary .src{display:none}.art summary h3{grid-column:1}.art summary::after{grid-row:1/3;grid-column:2}.art .body{padding-left:0}}
 @media (max-width:620px){.traj,.roles{grid-template-columns:1fr}}
 
+
+/* ===== CMS : événements à venir + annonce ===== */
+.upl{display:grid;gap:16px;margin-top:44px}
+.upl:empty{display:none}
+.upc{display:grid;grid-template-columns:170px 1fr auto;gap:28px;align-items:center;padding:28px;border:1px solid var(--gold);border-radius:var(--r);background:linear-gradient(120deg,rgba(245,166,35,.14),rgba(20,28,69,.55))}
+.upc .dd b{font:900 54px/1 var(--font-d);color:var(--gold);display:block}
+.upc .dd span{font:700 12px var(--font-d);letter-spacing:.18em;color:var(--ink)}
+.upc .jn{display:inline-block;margin-top:10px;font:700 10px var(--font-d);letter-spacing:.16em;text-transform:uppercase;font-style:normal;padding:5px 10px;border-radius:999px;background:var(--gold);color:var(--night)}
+.upc h3{font-size:clamp(22px,2.6vw,32px);margin-bottom:6px}
+.upc .pl{font:700 11px var(--font-d);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.upc p{color:var(--ink-dim);font-size:16px}
+.annonce{position:fixed;left:0;right:0;top:76px;z-index:45;display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;padding:10px 54px 10px 20px;background:var(--gold);color:var(--night);font:700 13px var(--font-d);text-align:center}
+.annonce a{color:var(--night);text-decoration:underline;text-underline-offset:3px}
+.annonce button{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:50%;background:rgba(11,16,38,.12);color:var(--night);font-size:18px;cursor:pointer}
+@media (max-width:760px){.upc{grid-template-columns:1fr;gap:14px;padding:22px}.annonce{top:68px;font-size:12px}.upc .btn{width:100%}}
 /* RESPONSIVE / FALLBACK */
 @media (max-width:980px){
   .links{display:none}.burger{display:block}
@@ -752,11 +767,12 @@ html,body{max-width:100%;overflow-x:hidden}
 <section id="evenements" class="pad" style="padding-bottom:0">
   <div class="wrap">
     <div class="lbl rv">Événements</div>
-    <h2 class="rv">Le radar est <em>en veille.</em></h2>
-    <div class="mission rv">
+    <h2 class="rv" id="evtitle">Le radar est <em>en veille.</em></h2>
+    <div class="mission rv" id="upcoming">
       <div class="radar"><svg viewBox="0 0 190 190"><circle cx="95" cy="95" r="90" fill="none" stroke="var(--line)"/><circle cx="95" cy="95" r="60" fill="none" stroke="var(--line)"/><circle cx="95" cy="95" r="30" fill="none" stroke="var(--line)"/><path d="M95 5v180M5 95h180" stroke="var(--line)"/><g class="sweep"><path d="M95 95 L95 5 A90 90 0 0 1 158 31 Z" fill="var(--gold)" opacity=".25"/></g><circle cx="130" cy="60" r="3" fill="var(--gold)"/><circle cx="64" cy="120" r="2.5" fill="var(--gold)"/></svg></div>
       <div><h3>Aucun événement programmé pour l'instant</h3><p>La prochaine observation publique ou AstroPause sera annoncée ici dès qu'elle est confirmée. Pour être prévenu en premier, écris-nous.</p><div style="margin-top:22px"><a class="btn solid" href="#rejoindre">Être prévenu</a></div></div>
     </div>
+    <div class="upl" id="upl"></div>
     <h3 class="rv" style="font-size:clamp(28px,4vw,48px);margin:100px 0 0">Missions <em>accomplies</em></h3>
     <p class="drag-hint rv" style="margin-top:34px">Fais glisser pour parcourir →</p>
     <div class="strip" id="strip">
@@ -1024,7 +1040,7 @@ $('#totop').addEventListener('click',function(){if(lenis)lenis.scrollTo(0,{durat
 (function(){var f=function(){var d=new Date();$('#hh').textContent=String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0')};f();setInterval(f,20000)})();
 $('#f').addEventListener('submit',function(e){e.preventDefault();var n=$('#n'),m=$('#m'),s=$('#s'),ok=1;
   $('#en').textContent=n.value.trim()?'':(ok=0,'Entre ton nom.');$('#em').textContent=m.value.trim()?'':(ok=0,'Écris-nous un petit message.');if(!ok)return;
-  var url='https://wa.me/2250758002993?text='+encodeURIComponent('Bonjour l\'AIA, je suis '+n.value.trim()+' ('+s.value+').\n'+m.value.trim());window.open(url,'_blank','noopener');
+  var url='https://wa.me/'+(window.AIA_WA||'2250758002993')+'?text='+encodeURIComponent('Bonjour l\'AIA, je suis '+n.value.trim()+' ('+s.value+').\n'+m.value.trim());window.open(url,'_blank','noopener');
   $('#fb').innerHTML='Si WhatsApp ne s\'ouvre pas : <a href="'+url+'" target="_blank" rel="noopener" style="color:var(--gold)">ouvrir WhatsApp</a>'});
 function count(b){if(b.done)return;b.done=1;var n=+b.dataset.n,plain=b.dataset.plain,plus=b.dataset.plus,fmt=function(v){return (plain?v:v.toLocaleString('fr-FR'))+(plus&&v===n?'+':'')};
   if(!hasG||rm){b.textContent=fmt(n);return}var o={v:0};gsap.to(o,{v:n,duration:1.8,ease:'power3.out',onUpdate:function(){b.textContent=fmt(Math.round(o.v))}})}
@@ -1289,5 +1305,7 @@ function initGlobe(){
 }
 try{initGlobe()}catch(err){console.warn('WebGL indisponible pour le globe',err)}
 </script>
+<script src="cms-config.js"></script>
+<script src="cms.js"></script>
 </body>
 </html>
