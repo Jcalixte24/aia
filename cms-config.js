@@ -1,8 +1,7 @@
-/* Configuration publique de la base de contenu (ces valeurs ne sont pas secrètes).
-   Remplis-les une seule fois en suivant FIREBASE_SETUP.md.
-   Tant que ces champs sont vides, l'espace admin tourne en MODE DÉMO : les modifications
-   restent dans le navigateur de la personne qui les fait et ne sont pas visibles des visiteurs. */
+/* Configuration publique de la base de contenu (ces valeurs ne sont pas secrètes :
+   la sécurité repose sur les règles de la base et sur la liste des administrateurs).
+   Projet Firebase : aia-ci (région Belgique). Voir FIREBASE_SETUP.md. */
 window.AIA_CMS = {
-  databaseURL: "",   // ex. https://aia-ci-default-rtdb.europe-west1.firebasedatabase.app
-  apiKey: ""         // ex. AIzaSy...  (Paramètres du projet > Général > Clé API Web)
+  databaseURL: "https://aia-ci-default-rtdb.europe-west1.firebasedatabase.app",
+  apiKey: "AIzaSyDdmDTkicH38B-D9SjnmKOnuAL4O9spP9U"
 };

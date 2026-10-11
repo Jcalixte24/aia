@@ -196,6 +196,12 @@ function confirmBox(title,msg,yes){$('#mt').textContent=title;$('#mp').textConte
 function readImage(file,max){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){var im=new Image();im.onload=function(){var k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.82))};im.onerror=function(){rej(new Error('image'))};im.src=fr.result};fr.onerror=function(){rej(new Error('image'))};fr.readAsDataURL(file)})}
 function srcOf(u){u=String(u||'');return /^images\//.test(u)?'../'+u:u}
 
+/* ---------- inactivité : déconnexion automatique après 30 min ---------- */
+var IDLE_MS=30*60*1000,lastAct=Date.now(),idleTimer=null;
+function touch(){lastAct=Date.now()}
+['click','keydown','input','pointerdown','scroll'].forEach(function(ev){document.addEventListener(ev,touch,{passive:true,capture:true})});
+function startIdle(){clearInterval(idleTimer);idleTimer=setInterval(function(){if(Date.now()-lastAct>IDLE_MS){clearInterval(idleTimer);auth.out();alert('Tu as été déconnecté après 30 minutes d'inactivité.');location.reload()}},20000)}
+
 /* ---------- authentification ---------- */
 var auth={
   get:function(){try{return JSON.parse(localStorage.getItem(AUTH_KEY)||'null')}catch(e){return null}},
@@ -386,7 +392,7 @@ $('#main').addEventListener('click',function(e){
 /* ---------- connexion / démarrage ---------- */
 function showLogin(){$('#app').classList.add('hide');$('#login').classList.remove('hide');
   $('#lf').classList.toggle('hide',!LIVE);$('#demoGo').classList.toggle('hide',LIVE);$('#demoNote').classList.toggle('hide',LIVE)}
-function enter(who){$('#login').classList.add('hide');$('#app').classList.remove('hide');$('#who').textContent=who;
+function enter(who){if(LIVE)startIdle();$('#login').classList.add('hide');$('#app').classList.remove('hide');$('#who').textContent=who;
   $('#out').classList.toggle('hide',!LIVE);
   store.load().then(function(c){c=c||{};data.events=arr(c.events);data.articles=arr(c.articles);data.team=arr(c.team);data.settings=Object.assign({networks:[]},c.settings||{});data.updatedAt=c.updatedAt||0;
     [data.events,data.articles,data.team].forEach(function(l){l.forEach(function(x){if(!x.id)x.id=uid()})});render()})
@@ -396,7 +402,7 @@ $('#lf').addEventListener('submit',function(e){e.preventDefault();
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){$('#eem').textContent='Entre une adresse e-mail valide.';ok=false}
   if(!pw){$('#epw').textContent='Entre ton mot de passe.';ok=false}
   if(!ok)return;var b=$('#lbtn');b.disabled=true;b.textContent='Connexion…';
-  auth.signIn(em,pw).then(function(a){enter(a.email)}).catch(function(err){$('#elf').textContent=authMsg(err)}).then(function(){b.disabled=false;b.textContent='Se connecter'})});
+  auth.signIn(em,pw).then(function(a){$('#pw').value='';enter(a.email)}).catch(function(err){$('#elf').textContent=authMsg(err)}).then(function(){b.disabled=false;b.textContent='Se connecter'})});
 $('#demoGo').onclick=function(){enter('Mode démo')};
 $('#out').onclick=function(){auth.out();location.reload()};
 (function boot(){
