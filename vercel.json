@@ -1,5 +1,29 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    { "source": "/qui-sommes-nous", "destination": "/#missions", "permanent": false },
+    { "source": "/qui-sommes-nous/", "destination": "/#missions", "permanent": false },
+    { "source": "/activites", "destination": "/#activites", "permanent": false },
+    { "source": "/activites/", "destination": "/#activites", "permanent": false },
+    { "source": "/evenements", "destination": "/#evenements", "permanent": false },
+    { "source": "/evenements/", "destination": "/#evenements", "permanent": false },
+    { "source": "/actualites", "destination": "/#journal", "permanent": false },
+    { "source": "/actualites/", "destination": "/#journal", "permanent": false },
+    { "source": "/actualites/:slug", "destination": "/#journal", "permanent": false },
+    { "source": "/actualites/:slug/", "destination": "/#journal", "permanent": false },
+    { "source": "/galerie", "destination": "/#activites", "permanent": false },
+    { "source": "/galerie/", "destination": "/#activites", "permanent": false },
+    { "source": "/partenaires", "destination": "/#partenaires", "permanent": false },
+    { "source": "/partenaires/", "destination": "/#partenaires", "permanent": false },
+    { "source": "/support", "destination": "/#rejoindre", "permanent": false },
+    { "source": "/support/", "destination": "/#rejoindre", "permanent": false },
+    { "source": "/contact", "destination": "/#rejoindre", "permanent": false },
+    { "source": "/contact/", "destination": "/#rejoindre", "permanent": false },
+    { "source": "/rejoindre", "destination": "/#rejoindre", "permanent": false },
+    { "source": "/rejoindre/", "destination": "/#rejoindre", "permanent": false },
+    { "source": "/en", "destination": "/", "permanent": false },
+    { "source": "/en/:path*", "destination": "/", "permanent": false }
+  ],
   "headers": [
     {
       "source": "/images/(.*)",
