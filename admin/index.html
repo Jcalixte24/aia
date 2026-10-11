@@ -200,7 +200,7 @@ function srcOf(u){u=String(u||'');return /^images\//.test(u)?'../'+u:u}
 var IDLE_MS=30*60*1000,lastAct=Date.now(),idleTimer=null;
 function touch(){lastAct=Date.now()}
 ['click','keydown','input','pointerdown','scroll'].forEach(function(ev){document.addEventListener(ev,touch,{passive:true,capture:true})});
-function startIdle(){clearInterval(idleTimer);idleTimer=setInterval(function(){if(Date.now()-lastAct>IDLE_MS){clearInterval(idleTimer);auth.out();alert('Tu as été déconnecté après 30 minutes d'inactivité.');location.reload()}},20000)}
+function startIdle(){clearInterval(idleTimer);idleTimer=setInterval(function(){if(Date.now()-lastAct>IDLE_MS){clearInterval(idleTimer);auth.out();alert("Tu as été déconnecté après 30 minutes d’inactivité.");location.reload()}},20000)}
 
 /* ---------- authentification ---------- */
 var auth={
