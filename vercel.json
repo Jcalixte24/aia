@@ -39,7 +39,7 @@
       ]
     },
     {
-      "source": "/(cms.js|cms-config.js|content-default.json)",
+      "source": "/(cms.js|cms-config.js|content-default.json|eclipse.js|eclipse.css|eclipse-core.js)",
       "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
     },
     {

@@ -405,6 +405,21 @@ footer{position:relative;border-top:1px solid var(--line);padding:90px 0 0;backg
 .annonce a{color:var(--night);text-decoration:underline;text-underline-offset:3px}
 .annonce button{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:50%;background:rgba(11,16,38,.12);color:var(--night);font-size:18px;cursor:pointer}
 @media (max-width:760px){.upc{grid-template-columns:1fr;gap:14px;padding:22px}.annonce{top:68px;font-size:12px}.upc .btn{width:100%}}
+/* bouton d'accroche dans la page */
+.ecl-teaser{margin-top:22px;padding:24px;border:1px solid var(--gold);border-radius:18px;background:linear-gradient(135deg,rgba(245,166,35,.16),rgba(20,28,69,.6));backdrop-filter:blur(8px);position:relative;overflow:hidden;text-align:left;width:100%;color:inherit;cursor:pointer;font:inherit;transition:transform .4s var(--ease),box-shadow .4s}
+.ecl-teaser:hover{transform:translateY(-4px);box-shadow:0 18px 50px rgba(245,166,35,.25)}
+.ecl-teaser::before{content:"";position:absolute;right:-50px;top:-50px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,#050816 38%,transparent 39%),radial-gradient(circle,rgba(255,208,132,.9),rgba(245,166,35,.15) 62%,transparent 70%);animation:eclp 5s ease-in-out infinite}
+@keyframes eclp{50%{transform:scale(1.12) rotate(8deg)}}
+.ecl-teaser small{font:700 10px var(--font-d);letter-spacing:.24em;color:var(--gold);text-transform:uppercase;display:block}
+.ecl-teaser strong{display:block;font:900 clamp(20px,2.6vw,28px)/1.15 var(--font-d);margin:8px 0 4px;max-width:78%}
+.ecl-teaser .dt{color:var(--ink-dim);font-size:14.5px}
+.ecl-teaser .cdm{display:flex;gap:8px;margin:14px 0 12px;flex-wrap:wrap}
+.ecl-teaser .cdm span{min-width:62px;padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:rgba(5,8,22,.5);text-align:center;font:700 9px var(--font-d);letter-spacing:.14em;color:var(--ink-dim)}
+.ecl-teaser .cdm b{display:block;font:900 24px/1 var(--font-d);color:var(--gold);font-variant-numeric:tabular-nums}
+.ecl-teaser .go{display:inline-flex;align-items:center;gap:10px;font:800 13px var(--font-d);letter-spacing:.06em;color:var(--night);background:var(--gold);padding:0 20px;min-height:46px;border-radius:999px}
+
+@media (max-width:860px){.ecl-teaser strong{max-width:100%}}
+.ecl-teaser[hidden]{display:none}
 /* RESPONSIVE / FALLBACK */
 @media (max-width:980px){
   .links{display:none}.burger{display:block}
@@ -878,6 +893,7 @@ html,body{max-width:100%;overflow-x:hidden}
       <div class="moonbox rv">
         <canvas class="moon" id="moonc" width="440" height="440" role="img" aria-label="La Lune telle qu'elle est visible aujourd'hui depuis Abidjan"></canvas>
         <p style="margin-top:18px;color:var(--ink-dim);font-size:14px" id="moontxt"></p>
+        <button type="button" class="ecl-teaser" id="eclteaser" aria-haspopup="dialog" hidden></button>
       </div>
       <div class="sky-grid rv">
         <div class="sk"><small>HEURE LOCALE (GMT)</small><b id="hh">--:--</b><span>Abidjan, 5°21′ N · 4°01′ O</span></div>
@@ -1079,7 +1095,7 @@ if(!hasG||rm){D.documentElement.classList.add('nomotion');$$('[data-n]').forEach
 D.documentElement.classList.add('anim');
 gsap.registerPlugin(ScrollTrigger);
 var coarse=matchMedia('(hover:none)').matches;
-if(window.Lenis&&!coarse){lenis=new Lenis({lerp:.09,smoothWheel:true});lenis.on('scroll',ScrollTrigger.update);gsap.ticker.add(function(t){lenis.raf(t*1000)});gsap.ticker.lagSmoothing(0)}
+if(window.Lenis&&!coarse){lenis=new Lenis({lerp:.09,smoothWheel:true});window.AIA_LENIS=lenis;lenis.on('scroll',ScrollTrigger.update);gsap.ticker.add(function(t){lenis.raf(t*1000)});gsap.ticker.lagSmoothing(0)}
 addEventListener('scroll',function(){sy=scrollY},{passive:true});
 
 function intro(){$('#splash').classList.add('out');
@@ -1304,6 +1320,42 @@ function initGlobe(){
     tag.style.opacity=facing?1:0;tag.style.left=((v.x*.5+.5)*100)+'%';tag.style.top=((-v.y*.5+.5)*100)+'%'})();
 }
 try{initGlobe()}catch(err){console.warn('WebGL indisponible pour le globe',err)}
+</script>
+<script src="eclipse-core.js"></script>
+<script>
+(function(){
+var b=document.getElementById("eclteaser");if(!b||!window.ECL)return;
+var LAT=5.36,LON=-4.0083,TZ="Africa/Abidjan",loaded=null;
+function fD(d,o){return new Intl.DateTimeFormat("fr-FR",Object.assign({timeZone:TZ},o)).format(d)}
+function openEcl(){
+  if(!loaded){
+    var l=document.createElement("link");l.rel="stylesheet";l.href="eclipse.css";document.head.appendChild(l);
+    loaded=import("./eclipse.js");
+  }
+  b.disabled=true;
+  loaded.then(function(m){b.disabled=false;m.open()}).catch(function(){b.disabled=false;loaded=null;alert("Impossible de charger la fenêtre éclipse. Réessaie dans un instant.")});
+}
+function paint(){
+  var n=ECL.nextEclipse(Date.now(),LAT,LON);if(!n){b.hidden=true;return}
+  var c=n.c,r=n.r,solar=c.kind==="solar",max=r.dateMax,
+      start=solar&&r.visible?r.c1.date.getTime():(!solar&&r.u1?r.u1.getTime():max.getTime()),
+      d=Math.max(0,start-Date.now()),
+      dd=Math.floor(d/864e5),hh=Math.floor(d%864e5/36e5),mm=Math.floor(d%36e5/6e4),ss=Math.floor(d%6e4/1e3);
+  var inProgress=Date.now()>=start&&Date.now()<=ECL.endTime(c);
+  var long=fD(max,{day:"numeric",month:"long",year:"numeric"}),dow=fD(max,{weekday:"long"});
+  var vis=n.notable?("Depuis Abidjan : "+n.label):("Depuis Abidjan : "+n.label.toLowerCase());
+  b.hidden=false;
+  b.innerHTML="<small>Prochaine éclipse</small><strong>"+ECL.title(c)+"</strong>"+
+    "<div class=\"dt\">"+dow+" "+long+" · "+vis+"</div>"+
+    (inProgress?"<div class=\"cdm\"><span><b style=\"color:#7be0a8\">●</b>EN COURS</span></div>":
+    "<div class=\"cdm\"><span><b>"+dd+"</b>JOURS</span><span><b>"+String(hh).padStart(2,"0")+"</b>HEURES</span><span><b>"+String(mm).padStart(2,"0")+"</b>MIN</span><span><b>"+String(ss).padStart(2,"0")+"</b>SEC</span></div>")+
+    "<span class=\"go\">Tout savoir sur l’éclipse du "+fD(max,{day:"numeric",month:"long"})+(max.getUTCFullYear()!==new Date().getFullYear()?" "+max.getUTCFullYear():"")+" →</span>";
+}
+b.addEventListener("click",openEcl);
+paint();setInterval(paint,1000);
+if(location.hash==="#eclipse")setTimeout(openEcl,600);
+window.addEventListener("hashchange",function(){if(location.hash==="#eclipse")openEcl()});
+})();
 </script>
 <script src="cms-config.js"></script>
 <script src="cms.js"></script>
